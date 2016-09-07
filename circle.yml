@@ -18,6 +18,10 @@ dependencies:
   override:
     - cd ${PROJECT} && make build
 
+test:
+  override:
+    - cd ${PROJECT} && go test -v
+
 deployment:
   release:
     branch: release
