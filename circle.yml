@@ -3,6 +3,7 @@ machine:
     GODIST: "go1.7.linux-amd64.tar.gz"
     PATH: "/usr/local/go/bin:/usr/local/go_workspace/bin:~/.go_workspace/bin:${PATH}"
     GOPATH: "${HOME}/.go_workspace:/usr/local/go_workspace:${HOME}/.go_project"
+    PROJECT: "${HOME}/.go_project/src/github.com/jamesnetherton/homehub-cli"
   post:
     - mkdir -p download
     - mkdir -p ${HOME}/.go_project/src/github.com/jamesnetherton/
@@ -15,10 +16,10 @@ dependencies:
   cache_directories:
     - ~/download
   override:
-    - cd ${GOPATH} && make build
+    - cd ${PROJECT} && make build
 
 deployment:
   release:
     branch: release
     commands:
-      - cd ${GOPATH} && make release
+      - cd ${PROJECT} && make release
