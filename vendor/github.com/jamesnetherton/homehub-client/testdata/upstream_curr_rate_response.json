@@ -1,0 +1,44 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 3,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/DSL/Channels/Channel[@uid=1]/UpstreamCurrRate",
+            "parameters": {
+              "value": 52121,
+              "capability": {
+                "name": "UpstreamCurrRate",
+                "description": "TBD",
+                "type": "xmo:uint32 xmo:number xmo:value",
+                "flags": {
+                  "value": true,
+                  "statistic": true,
+                  "xml-child": true
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "events": []
+  }
+}

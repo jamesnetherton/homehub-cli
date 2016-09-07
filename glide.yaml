@@ -1,0 +1,5 @@
+package: github.com/jamesnetherton/homehub-cli
+import:
+- package: github.com/chzyer/readline
+  version: ~1.4.0
+- package: github.com/jamesnetherton/homehub-client

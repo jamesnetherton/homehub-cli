@@ -1,0 +1,44 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 2,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/IP/Interfaces/Interface[@uid=3]/Stats/BytesSent",
+            "parameters": {
+              "value": "11223344",
+              "capability": {
+                "name": "BytesSent",
+                "description": "TBD",
+                "type": "xmo:uint64 xmo:number xmo:value",
+                "flags": {
+                  "value": true,
+                  "statistic": true,
+                  "xml-child": true
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "events": []
+  }
+}

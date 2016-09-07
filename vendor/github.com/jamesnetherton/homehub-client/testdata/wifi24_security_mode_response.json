@@ -1,0 +1,46 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 13,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/WiFi/AccessPoints/AccessPoint[@uid='1']/Security/ModeEnabled",
+            "parameters": {
+              "session-options": {
+                "nss": null,
+                "language": "",
+                "context-flags": {
+                  "get-content-name": false,
+                  "local-time": false
+                },
+                "capability-flags": {},
+                "capability-depth": 0,
+                "time-format": ""
+              },
+              "meta": "Yes this is a fake mode!",
+              "value": "ULTRA_SECURE_MODE"
+            }
+          }
+        ],
+        "events": null
+      }
+    ]
+  }
+}

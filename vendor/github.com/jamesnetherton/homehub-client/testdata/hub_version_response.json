@@ -1,0 +1,46 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 31,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/DeviceInfo/ProductClass",
+            "parameters": {
+              "value": "Home Hub 60 Type A",
+              "capability": {
+                "name": "ProductClass",
+                "description": "Product class",
+                "type": "devinfo:DeviceInfo:ProductClass xmo:str xmo:value",
+                "flags": {
+                  "value": true,
+                  "config": true,
+                  "xml-child": true
+                },
+                "restrictions": {
+                  "max-length": 64
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

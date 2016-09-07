@@ -1,0 +1,45 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 22,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/DSL/Lines/Line[@uid='1']/FirmwareVersion",
+            "parameters": {
+              "session-options": {
+                "nss": null,
+                "language": "",
+                "context-flags": {
+                  "get-content-name": false,
+                  "local-time": false
+                },
+                "capability-flags": {},
+                "capability-depth": 0,
+                "time-format": ""
+              },
+              "value": "AfH042f.d26k1\n"
+            }
+          }
+        ],
+        "events": null
+      }
+    ]
+  }
+}
