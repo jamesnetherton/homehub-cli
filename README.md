@@ -9,7 +9,7 @@ Useful for performing quick reboots or for pulling statistics from the Home Hub.
 
 ## Usage
 
-Download one of the [releases](releases) for your operating system.
+Download one of the [releases](https://github.com/jamesnetherton/homehub-cli/releases) for your operating system.
 
 For *nix and OS X:
 
