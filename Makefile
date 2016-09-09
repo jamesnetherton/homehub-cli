@@ -1,6 +1,6 @@
 ARCH=$(shell uname -m)
 NAME=homehub-cli
-VERSION=0.0.1
+VERSION=$(shell cat version.txt)
 
 build:
 	rm -rf build
