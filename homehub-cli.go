@@ -15,26 +15,10 @@ import (
 
 func main() {
 	var hub *homehub.Hub
-	var user string
-
-	if len(strings.TrimSpace(os.Getenv("USER"))) > 0 {
-		user = os.Getenv("USER")
-	} else if len(strings.TrimSpace(os.Getenv("USERNAME"))) > 0 {
-		user = os.Getenv("USERNAME")
-	} else {
-		user = "unknown"
-	}
 
 	banner()
-	createCompleter()
 
-	completer := createCompleter()
-	l, err := readline.NewEx(&readline.Config{
-		Prompt:          user + "@homehub: ",
-		AutoComplete:    completer,
-		InterruptPrompt: "^C",
-		EOFPrompt:       "exit",
-	})
+	l, err := createReadline()
 	if err != nil {
 		panic(err)
 	}
@@ -64,8 +48,27 @@ func main() {
 	}
 }
 
-func createCompleter() *readline.PrefixCompleter {
-	return readline.NewPrefixCompleter(readline.PcItemDynamic(listFuncNames()))
+func createReadline() (l *readline.Instance, err error) {
+	return readline.NewEx(&readline.Config{
+		Prompt:          getUserPrompt(),
+		AutoComplete:    readline.NewPrefixCompleter(readline.PcItemDynamic(listFuncNames())),
+		InterruptPrompt: "^C",
+		EOFPrompt:       "exit",
+	})
+}
+
+func getUserPrompt() string {
+	var user string
+
+	if len(strings.TrimSpace(os.Getenv("USER"))) > 0 {
+		user = os.Getenv("USER")
+	} else if len(strings.TrimSpace(os.Getenv("USERNAME"))) > 0 {
+		user = os.Getenv("USERNAME")
+	} else {
+		user = "unknown"
+	}
+
+	return fmt.Sprintf("%s@homehub: ", user)
 }
 
 func listFuncNames() func(string) []string {
