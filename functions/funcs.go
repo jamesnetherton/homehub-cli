@@ -15,7 +15,6 @@ var FuncNames = []string{
 	"InternetConnectionStatus",
 	"LightStatus",
 	"LocalTime",
-	"Login",
 	"MaintenaceFirmwareVersion",
 	"PublicIPAddress",
 	"PublicSubnetMask",

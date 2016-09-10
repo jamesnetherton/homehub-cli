@@ -11,39 +11,94 @@ import (
 	"github.com/chzyer/readline"
 	"github.com/jamesnetherton/homehub-cli/functions"
 	"github.com/jamesnetherton/homehub-client"
+	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/cobra/cmd"
+)
+
+var (
+	hubURL   string
+	userName string
+	password string
+	hub      *homehub.Hub
 )
 
 func main() {
-	var hub *homehub.Hub
+	cmd.RootCmd.PersistentFlags().StringVarP(&hubURL, "huburl", "r", "http://192.168.1.254", "URL of the home hub router")
+	cmd.RootCmd.PersistentFlags().StringVarP(&userName, "username", "u", "admin", "The hub router user name")
+	cmd.RootCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "The home hub router password")
 
-	banner()
+	cmdHandler := func(cmd *cobra.Command, args []string) {
+		if !stringIsEmpty(hubURL) && !stringIsEmpty(userName) && !stringIsEmpty(password) {
+			hub = homehub.New(hubURL, userName, password)
+			success, _ := hub.Login()
 
-	l, err := createReadline()
-	if err != nil {
-		panic(err)
-	}
-	defer l.Close()
-
-	for {
-		line, err := l.Readline()
-
-		if err == readline.ErrInterrupt {
-			if len(line) == 0 {
-				break
-			} else {
-				continue
+			if !success {
+				fmt.Println("Login failed")
+				return
 			}
-		} else if err == io.EOF {
-			break
+
+			invokeMethod(cmd.Name())
+		} else {
+			cmd.Usage()
 		}
+	}
 
-		line = strings.TrimSpace(line)
-		if len(line) > 0 {
-			if line != "Login" {
-				invokeMethod(hub, line)
-			} else {
-				hub = doLogin(l)
+	for _, funcName := range functions.FuncNames {
+		cmd.RootCmd.AddCommand(&cobra.Command{
+			Use: funcName,
+			Run: cmdHandler,
+		})
+	}
+
+	helpFunc := func(cmd *cobra.Command, args []string) {
+		fmt.Println("Usage:\n  homehub-cli [command] --huburl=<home hub url> --username=<home hub username> --password=<home hub password>")
+		fmt.Println("\nCommands:\n ", strings.Join(functions.FuncNames, "\n  "))
+	}
+
+	usageFunc := func(cmd *cobra.Command) error {
+		fmt.Printf("Usage:\n  homehub-cli %s --huburl=<home hub url> --username=<home hub username> --password=<home hub password>\n", cmd.Name())
+		return nil
+	}
+
+	cmd.RootCmd.SetHelpFunc(helpFunc)
+	cmd.RootCmd.SetUsageFunc(usageFunc)
+	cmd.RootCmd.SilenceErrors = true
+
+	if len(os.Args[1:]) == 0 {
+		banner()
+
+		l, err := createReadline()
+		if err != nil {
+			panic(err)
+		}
+		defer l.Close()
+
+		for {
+			line, err := l.Readline()
+
+			if err == readline.ErrInterrupt {
+				if len(line) == 0 {
+					break
+				} else {
+					continue
+				}
+			} else if err == io.EOF {
+				break
 			}
+
+			line = strings.TrimSpace(line)
+			if !stringIsEmpty(line) {
+				if line != "Login" {
+					invokeMethod(line)
+				} else {
+					hub = doLogin(l)
+				}
+			}
+		}
+	} else {
+		err := cmd.RootCmd.Execute()
+		if err != nil {
+			helpFunc(nil, nil)
 		}
 	}
 }
@@ -60,9 +115,9 @@ func createReadline() (l *readline.Instance, err error) {
 func getUserPrompt() string {
 	var user string
 
-	if len(strings.TrimSpace(os.Getenv("USER"))) > 0 {
+	if !stringIsEmpty(os.Getenv("USER")) {
 		user = os.Getenv("USER")
-	} else if len(strings.TrimSpace(os.Getenv("USERNAME"))) > 0 {
+	} else if !stringIsEmpty(os.Getenv("USERNAME")) {
 		user = os.Getenv("USERNAME")
 	} else {
 		user = "unknown"
@@ -73,11 +128,11 @@ func getUserPrompt() string {
 
 func listFuncNames() func(string) []string {
 	return func(s string) []string {
-		return functions.FuncNames
+		return append(functions.FuncNames, "Login")
 	}
 }
 
-func invokeMethod(hub *homehub.Hub, methodName string) {
+func invokeMethod(methodName string) {
 	m := reflect.ValueOf(hub).MethodByName(methodName)
 	if m.IsValid() {
 		if hub != nil {
@@ -90,6 +145,10 @@ func invokeMethod(hub *homehub.Hub, methodName string) {
 	} else {
 		fmt.Println("homehub: Command not found:", strconv.Quote(methodName))
 	}
+}
+
+func stringIsEmpty(s string) bool {
+	return len(strings.TrimSpace(s)) == 0
 }
 
 func doLogin(l *readline.Instance) *homehub.Hub {

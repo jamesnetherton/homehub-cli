@@ -24,7 +24,7 @@ func main() {
 		for _, line := range strings.Split(body, "\n") {
 			if strings.HasPrefix(line, "func") {
 				matches := [][]string{regex.FindStringSubmatch(line)}
-				if len(matches[0]) > 0 {
+				if len(matches[0]) > 0 && matches[0][1] != "Login" {
 					names = append(names, strconv.Quote(matches[0][1]))
 				}
 			}
