@@ -11,6 +11,7 @@ var FuncNames = []string{
 	"DhcpSubnetMask",
 	"DownstreamSyncSpeed",
 	"EnableDebug",
+	"EventLog",
 	"HardwareVersion",
 	"InternetConnectionStatus",
 	"LightStatus",
