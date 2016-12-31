@@ -2,6 +2,7 @@ package functions
 
 // FuncNames defines the set of available function names available to the CLI
 var FuncNames = []string{
+        "BandwidthMonitor",
 	"BroadbandProductType",
 	"DataPumpVersion",
 	"DataReceived",
