@@ -7,6 +7,7 @@ var FuncNames = []string{
 	"DataPumpVersion",
 	"DataReceived",
 	"DataSent",
+        "DhcpAuthoritative",
 	"DhcpPoolStart",
 	"DhcpPoolEnd",
 	"DhcpSubnetMask",
