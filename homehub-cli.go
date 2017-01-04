@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/chzyer/readline"
-	"github.com/jamesnetherton/homehub-cli/functions"
 	"github.com/jamesnetherton/homehub-client"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/cobra/cmd"
@@ -43,7 +42,7 @@ func main() {
 		}
 	}
 
-	for _, funcName := range functions.FuncNames {
+	for _, funcName := range getFuncNames() {
 		cmd.RootCmd.AddCommand(&cobra.Command{
 			Use: funcName,
 			Run: cmdHandler,
@@ -52,7 +51,7 @@ func main() {
 
 	helpFunc := func(cmd *cobra.Command, args []string) {
 		fmt.Println("Usage:\n  homehub-cli [command] --huburl=<home hub url> --username=<home hub username> --password=<home hub password>")
-		fmt.Println("\nCommands:\n ", strings.Join(functions.FuncNames, "\n  "))
+		fmt.Println("\nCommands:\n ", strings.Join(getFuncNames(), "\n  "))
 	}
 
 	usageFunc := func(cmd *cobra.Command) error {
@@ -128,8 +127,17 @@ func getUserPrompt() string {
 
 func listFuncNames() func(string) []string {
 	return func(s string) []string {
-		return append(functions.FuncNames, "Login")
+		return getFuncNames()
 	}
+}
+
+func getFuncNames() []string {
+	v := reflect.TypeOf(&homehub.Hub{})
+	funcNames := make([]string, v.NumMethod())
+	for i := 0; i < v.NumMethod(); i++ {
+		funcNames[i] = v.Method(i).Name
+	}
+	return funcNames
 }
 
 func invokeMethod(methodName string) {
