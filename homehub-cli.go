@@ -36,7 +36,7 @@ func main() {
 				return
 			}
 
-			invokeMethod(cmd.Name())
+			invokeMethod(nil, cmd.Name(), args)
 		} else {
 			cmd.Usage()
 		}
@@ -87,8 +87,11 @@ func main() {
 
 			line = strings.TrimSpace(line)
 			if !stringIsEmpty(line) {
-				if line != "Login" {
-					invokeMethod(line)
+				if !strings.HasPrefix(line, "Login") {
+					cmd := strings.Split(line, " ")
+					methodName := cmd[0]
+					args := append(cmd[:0], cmd[1:]...)
+					invokeMethod(l, methodName, args)
 				} else {
 					hub = doLogin(l)
 				}
@@ -140,15 +143,62 @@ func getFuncNames() []string {
 	return funcNames
 }
 
-func invokeMethod(methodName string) {
-	m := reflect.ValueOf(hub).MethodByName(methodName)
-	if m.IsValid() {
+func invokeMethod(l *readline.Instance, methodName string, args []string) {
+	h := reflect.TypeOf(hub)
+	m, found := h.MethodByName(methodName)
+	if found {
+		t := m.Func.Type()
+		inputs := make([]reflect.Value, t.NumIn())
+
+		if t.NumIn() > 0 {
+			argOffset := 0
+			if t.In(0).Kind().String() == "ptr" {
+				argOffset = 1
+			}
+
+			if len(args) != t.NumIn()-argOffset {
+				fmt.Printf("Wrong number of arguments for '%s'. Expected %d but got %d.\n", methodName, t.NumIn()-1, len(args))
+				return
+			}
+
+			for i := argOffset; i < t.NumIn(); i++ {
+				switch t.In(i).Kind().String() {
+				case "bool":
+					val, err := strconv.ParseBool(args[i-argOffset])
+					if err == nil {
+						inputs[i] = reflect.ValueOf(val)
+					} else {
+						fmt.Printf("Expected '%s' boolean function argument %d to be either true or false . But got '%s'.\n", methodName, i, args[i-argOffset])
+						return
+					}
+					break
+				case "int":
+					val, err := strconv.Atoi(args[i-argOffset])
+					if err == nil {
+						inputs[i] = reflect.ValueOf(val)
+					} else {
+						fmt.Printf("Expected '%s' int function argument %d to be numeric. But got '%s'.\n", methodName, i, args[i-argOffset])
+						return
+					}
+					break
+				default:
+					inputs[i] = reflect.ValueOf(args[i-argOffset])
+				}
+			}
+		}
+
+		if hub == nil {
+			fmt.Printf("\nYou are not logged in. Please login...\n\n")
+			hub = doLogin(l)
+		}
+
 		if hub != nil {
-			resp := m.Call(nil)
-			result := resp[0].String()
-			fmt.Println(result)
-		} else {
-			fmt.Println("homehub: You are not logged in. Use the Login command")
+			inputs[0] = reflect.ValueOf(hub)
+			resp := m.Func.Call(inputs)
+			if t.NumOut() > 0 {
+				result := resp[0].String()
+				fmt.Println(result)
+			}
 		}
 	} else {
 		fmt.Println("homehub: Command not found:", strconv.Quote(methodName))
