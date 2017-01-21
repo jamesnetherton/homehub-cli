@@ -13,19 +13,8 @@ func newClient(URL string, username string, password string) *client {
 	return &client{a}
 }
 
-func (c *client) createRequest(method string, xpath string) (req *request) {
-	return newRequest(&c.authData, method, xpath)
-}
-
-func (c *client) sendXPathRequest(xpath string) (result string, err error) {
-	method := "getValue"
-
-	// TODO: Clean up this piece of hackery
-	if xpath == "Device" {
-		method = "reboot"
-	}
-
-	req := c.createRequest(method, xpath)
+func (c *client) getXPathValue(xpath string) (result string, err error) {
+	req := newXPathRequest(&c.authData, xpath, methodGetValue, nil)
 	resp, err := req.send()
 
 	if err == nil {
@@ -33,4 +22,32 @@ func (c *client) sendXPathRequest(xpath string) (result string, err error) {
 	}
 
 	return "", err
+}
+
+func (c *client) getXPathValues(xpath string) (values [][]value, err error) {
+	req := newXPathRequest(&c.authData, xpath, methodGetValue, nil)
+	resp, err := req.send()
+
+	if err == nil {
+		return resp.getValues(xpath), nil
+	}
+
+	return nil, err
+}
+
+func (c *client) getXPathHostValue(xpath string) (h *host, err error) {
+	req := newXPathRequest(&c.authData, xpath, methodGetValue, nil)
+	resp, err := req.send()
+
+	if err == nil {
+		return resp.getHost(), nil
+	}
+
+	return nil, err
+}
+
+func (c *client) setXPathValue(xpath string, value interface{}) (err error) {
+	req := newXPathRequest(&c.authData, xpath, methodSetValue, value)
+	_, err = req.send()
+	return err
 }

@@ -1,16 +1,19 @@
 package homehub
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 )
 
 type apiTest struct {
 	method          string
+	methodArgs      []interface{}
 	apiStubResponse string
 	expectedResult  string
 	t               *testing.T
@@ -18,7 +21,16 @@ type apiTest struct {
 
 func mockAPIClientServer(apiStubResponse string) (*httptest.Server, *Hub) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		bytesRead, err := ioutil.ReadFile("testdata/" + apiStubResponse + "_response.json")
+		var stubDataFile string
+		if strings.HasSuffix(r.RequestURI, "/eventLog") {
+			stubDataFile = "testdata/eventLog.txt"
+		} else if strings.HasSuffix(r.RequestURI, "/stats.csv") {
+			stubDataFile = "testdata/stats.csv"
+		} else {
+			stubDataFile = "testdata/" + apiStubResponse + "_response.json"
+		}
+
+		bytesRead, err := ioutil.ReadFile(stubDataFile)
 		if err == nil {
 			fmt.Fprintln(w, string(bytesRead))
 		} else {
@@ -34,7 +46,7 @@ func testAPIResponse(a *apiTest) {
 	server, hub := mockAPIClientServer(a.apiStubResponse)
 	defer server.Close()
 
-	v := reflect.ValueOf(hub)
+	v := reflect.TypeOf(hub)
 
 	// Simulate authentication before invoking target method
 	hub.client.authData.userName = "admin"
@@ -42,14 +54,31 @@ func testAPIResponse(a *apiTest) {
 	hub.client.authData.sessionID = "987879"
 	hub.client.authData.nonce = "2355345"
 
-	apiMethod := v.MethodByName(a.method)
-	resp := apiMethod.Call(nil)
+	apiMethod, _ := v.MethodByName(a.method)
 
-	result := resp[0].String()
+	inputs := make([]reflect.Value, len(a.methodArgs)+1)
+	for i := range a.methodArgs {
+		inputs[i+1] = reflect.ValueOf(a.methodArgs[i])
+	}
 
-	// Expect an empty response for a reboot
-	if !resp[1].IsNil() && a.method != "Reboot" {
-		a.t.Fatalf("API method %s failed", a.method)
+	inputs[0] = reflect.ValueOf(hub)
+	resp := apiMethod.Func.Call(inputs)
+	result := ""
+
+	if resp[0].Type().String() == "string" {
+		result = resp[0].String()
+	} else if resp[0].Type().String() == "error" {
+		if !resp[0].IsNil() {
+			a.t.Fatalf("API method %s returned an unexpected error", a.method)
+		}
+	}
+
+	if len(resp) > 1 {
+		if !resp[1].IsNil() {
+			if resp[1].Type().String() == "error" {
+				result = fmt.Sprintf("%s", resp[1].Interface())
+			}
+		}
 	}
 
 	if result != a.expectedResult {
@@ -57,48 +86,192 @@ func testAPIResponse(a *apiTest) {
 	}
 }
 
+func TestBandwidthMonitor(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "BandwidthMonitor",
+		apiStubResponse: "bandwidth_monitor",
+		expectedResult:  "a0:b1:c2:d3:e4:f5,2016-12-31,10959,1301\na1:b9:c8:d7:e6:f5,2016-12-31,218,30\n\n",
+		t:               t,
+	})
+}
+
 func TestBroadbandProductType(t *testing.T) {
-	testAPIResponse(&apiTest{"BroadbandProductType", "interface_type", "BT Infinity", t})
+	testAPIResponse(&apiTest{
+		method:          "BroadbandProductType",
+		apiStubResponse: "interface_type",
+		expectedResult:  "BT Infinity",
+		t:               t,
+	})
+}
+
+func TestConnectedDevices(t *testing.T) {
+	var buffer bytes.Buffer
+
+	buffer.WriteString("\n")
+	buffer.WriteString("--   ----------          ----------------         ----   \n")
+	buffer.WriteString("ID   IP Address          Physical Address         Type   \n")
+	buffer.WriteString("--   ----------          ----------------         ----   \n")
+	buffer.WriteString("2    192.168.1.65        38:FD:3B:40:77:5E        Ethernet\n")
+	buffer.WriteString("3    192.168.1.66        38:FD:3B:40:77:5F        Ethernet\n")
+
+	testAPIResponse(&apiTest{
+		method:          "ConnectedDevices",
+		apiStubResponse: "connected_devices",
+		expectedResult:  buffer.String(),
+		t:               t,
+	})
 }
 
 func TestDataPumpVersion(t *testing.T) {
-	testAPIResponse(&apiTest{"DataPumpVersion", "data_pump_version", "AfH042f.d26k1\n", t})
+	testAPIResponse(&apiTest{
+		method:          "DataPumpVersion",
+		apiStubResponse: "data_pump_version",
+		expectedResult:  "AfH042f.d26k1\n",
+		t:               t,
+	})
 }
 
 func TestDataReceived(t *testing.T) {
-	testAPIResponse(&apiTest{"DataReceived", "data_received", "99887766", t})
+	testAPIResponse(&apiTest{
+		method:          "DataReceived",
+		apiStubResponse: "data_received",
+		expectedResult:  "99887766",
+		t:               t,
+	})
 }
 
 func TestDataSent(t *testing.T) {
-	testAPIResponse(&apiTest{"DataSent", "data_sent", "11223344", t})
+	testAPIResponse(&apiTest{
+		method:          "DataSent",
+		apiStubResponse: "data_sent",
+		expectedResult:  "11223344",
+		t:               t,
+	})
+}
+
+func TestDeviceInfo(t *testing.T) {
+
+	var buffer bytes.Buffer
+	buffer.WriteString("\n")
+	buffer.WriteString("--   ----------          ----------------         ----   \n")
+	buffer.WriteString("ID   IP Address          Physical Address         Type   \n")
+	buffer.WriteString("--   ----------          ----------------         ----   \n")
+	buffer.WriteString("2    192.168.1.65        38:FD:3B:40:77:5E        Ethernet\n")
+
+	testAPIResponse(&apiTest{
+		method:          "DeviceInfo",
+		methodArgs:      []interface{}{1},
+		apiStubResponse: "device_info",
+		expectedResult:  buffer.String(),
+		t:               t,
+	})
+}
+
+func TestDhcpAuthoritative(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "DhcpAuthoritative",
+		apiStubResponse: "dhcp_authoritative",
+		expectedResult:  "true",
+		t:               t,
+	})
 }
 
 func TestDhcpPoolStart(t *testing.T) {
-	testAPIResponse(&apiTest{"DhcpPoolStart", "dhcp_ipv4_pool_start", "192.168.1.64", t})
+	testAPIResponse(&apiTest{
+		method:          "DhcpPoolStart",
+		apiStubResponse: "dhcp_ipv4_pool_start",
+		expectedResult:  "192.168.1.64",
+		t:               t})
 }
 
 func TestDhcpPoolEnd(t *testing.T) {
-	testAPIResponse(&apiTest{"DhcpPoolEnd", "dhcp_ipv4_pool_end", "192.168.1.253", t})
+	testAPIResponse(&apiTest{
+		method:          "DhcpPoolEnd",
+		apiStubResponse: "dhcp_ipv4_pool_end",
+		expectedResult:  "192.168.1.253",
+		t:               t,
+	})
 }
 
 func TestDhcpSubnetMask(t *testing.T) {
-	testAPIResponse(&apiTest{"DhcpSubnetMask", "dhcp_subnet_mask", "255.255.255.0", t})
+	testAPIResponse(&apiTest{
+		method:          "DhcpSubnetMask",
+		apiStubResponse: "dhcp_subnet_mask",
+		expectedResult:  "255.255.255.0",
+		t:               t,
+	})
 }
 
 func TestDownstreamSyncSpeed(t *testing.T) {
-	testAPIResponse(&apiTest{"DownstreamSyncSpeed", "downstream_curr_rate", "97543", t})
+	testAPIResponse(&apiTest{
+		method:          "DownstreamSyncSpeed",
+		apiStubResponse: "downstream_curr_rate",
+		expectedResult:  "97543",
+		t:               t,
+	})
+}
+
+func TestEventLog(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "EventLog",
+		apiStubResponse: "event_log",
+		expectedResult:  "event 1\nevent 2\n\n",
+		t:               t,
+	})
 }
 
 func TestHardwareVersion(t *testing.T) {
-	testAPIResponse(&apiTest{"HardwareVersion", "hardware_version", "1.0", t})
+	testAPIResponse(&apiTest{
+		method:          "HardwareVersion",
+		apiStubResponse: "hardware_version",
+		expectedResult:  "1.0",
+		t:               t,
+	})
 }
 
 func TestInternetConnectionStatus(t *testing.T) {
-	testAPIResponse(&apiTest{"InternetConnectionStatus", "wan_internet_status", "UP", t})
+	testAPIResponse(&apiTest{
+		method:          "InternetConnectionStatus",
+		apiStubResponse: "wan_internet_status",
+		expectedResult:  "UP",
+		t:               t,
+	})
+}
+
+func TestLightBrightness(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "LightBrightness",
+		apiStubResponse: "hub_light_brightness",
+		expectedResult:  "50",
+		t:               t,
+	})
+}
+
+func TestLightBrightnessSet(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "LightBrightnessSet",
+		methodArgs:      []interface{}{50},
+		apiStubResponse: "hub_light_brightness_set",
+		t:               t,
+	})
+}
+
+func TestLightEnable(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "LightEnable",
+		methodArgs:      []interface{}{true},
+		apiStubResponse: "hub_light_enable",
+		t:               t,
+	})
 }
 
 func TestLightStatus(t *testing.T) {
-	testAPIResponse(&apiTest{"LightStatus", "hub_light_status", "OFF", t})
+	testAPIResponse(&apiTest{
+		method:          "LightStatus",
+		apiStubResponse: "hub_light_status",
+		expectedResult:  "OFF",
+		t:               t,
+	})
 }
 
 func TestLoginSuccess(t *testing.T) {
@@ -117,53 +290,127 @@ func TestLoginSuccess(t *testing.T) {
 }
 
 func TestLocalTime(t *testing.T) {
-	testAPIResponse(&apiTest{"LocalTime", "ntp_local_time", "2016-08-30T19:48:55+0100", t})
+	testAPIResponse(&apiTest{
+		method:          "LocalTime",
+		apiStubResponse: "ntp_local_time",
+		expectedResult:  "2016-08-30T19:48:55+0100",
+		t:               t,
+	})
 }
 
 func TestMaintenanceFirmwareVersion(t *testing.T) {
-	testAPIResponse(&apiTest{"MaintenaceFirmwareVersion", "maintenance_firmware_version", "SG0B000000AA", t})
+	testAPIResponse(&apiTest{
+		method:          "MaintenaceFirmwareVersion",
+		apiStubResponse: "maintenance_firmware_version",
+		expectedResult:  "SG0B000000AA",
+		t:               t,
+	})
 }
 
 func TestPublicIPAddress(t *testing.T) {
-	testAPIResponse(&apiTest{"PublicIPAddress", "public_ip4", "111.222.333.444", t})
+	testAPIResponse(&apiTest{
+		method:          "PublicIPAddress",
+		apiStubResponse: "public_ip4",
+		expectedResult:  "111.222.333.444",
+		t:               t,
+	})
 }
 
 func TestPublicSubnetMask(t *testing.T) {
-	testAPIResponse(&apiTest{"PublicSubnetMask", "public_subnet_mask", "255.255.255.255", t})
+	testAPIResponse(&apiTest{
+		method:          "PublicSubnetMask",
+		apiStubResponse: "public_subnet_mask",
+		expectedResult:  "255.255.255.255",
+		t:               t,
+	})
 }
 
 func TestReboot(t *testing.T) {
-	testAPIResponse(&apiTest{"Reboot", "reboot", "", t})
+	testAPIResponse(&apiTest{
+		method:          "Reboot",
+		apiStubResponse: "reboot",
+		expectedResult:  "",
+		t:               t,
+	})
 }
 
 func TestSambaHost(t *testing.T) {
-	testAPIResponse(&apiTest{"SambaHost", "samba_host", "bthub,hub,bthomehub,api", t})
+	testAPIResponse(&apiTest{
+		method:          "SambaHost",
+		apiStubResponse: "samba_host",
+		expectedResult:  "bthub,hub,bthomehub,api",
+		t:               t,
+	})
 }
 
 func TestSambaIP(t *testing.T) {
-	testAPIResponse(&apiTest{"SambaIP", "samba_ip", "192.168.1.254", t})
+	testAPIResponse(&apiTest{
+		method:          "SambaIP",
+		apiStubResponse: "samba_ip",
+		expectedResult:  "192.168.1.254",
+		t:               t,
+	})
 }
 
 func TestSerialNumber(t *testing.T) {
-	testAPIResponse(&apiTest{"SerialNumber", "serial_number", "+123456+NQ98765432", t})
+	testAPIResponse(&apiTest{
+		method:          "SerialNumber",
+		apiStubResponse: "serial_number",
+		expectedResult:  "+123456+NQ98765432",
+		t:               t,
+	})
+}
+
+func TestSessionExpired(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "SerialNumber",
+		apiStubResponse: "session_expired",
+		expectedResult:  "Invalid user session",
+		t:               t,
+	})
 }
 
 func TestSoftwareVersion(t *testing.T) {
-	testAPIResponse(&apiTest{"SoftwareVersion", "software_version", "SG4B100021AA", t})
+	testAPIResponse(&apiTest{
+		method:          "SoftwareVersion",
+		apiStubResponse: "software_version",
+		expectedResult:  "SG4B100021AA",
+		t:               t,
+	})
 }
 
 func TestUpstreamSyncSpeed(t *testing.T) {
-	testAPIResponse(&apiTest{"UpstreamSyncSpeed", "upstream_curr_rate", "52121", t})
+	testAPIResponse(&apiTest{
+		method:          "UpstreamSyncSpeed",
+		apiStubResponse: "upstream_curr_rate",
+		expectedResult:  "52121",
+		t:               t,
+	})
 }
 
 func TestVersion(t *testing.T) {
-	testAPIResponse(&apiTest{"Version", "hub_version", "Home Hub 60 Type A", t})
+	testAPIResponse(&apiTest{
+		method:          "Version",
+		apiStubResponse: "hub_version",
+		expectedResult:  "Home Hub 60 Type A",
+		t:               t,
+	})
 }
 
 func TestWiFiSecurityMode(t *testing.T) {
-	testAPIResponse(&apiTest{"WiFiSecurityMode", "wifi24_security_mode", "ULTRA_SECURE_MODE", t})
+	testAPIResponse(&apiTest{
+		method:          "WiFiSecurityMode",
+		apiStubResponse: "wifi24_security_mode",
+		expectedResult:  "ULTRA_SECURE_MODE",
+		t:               t,
+	})
 }
 
 func TestWiFiSSID(t *testing.T) {
-	testAPIResponse(&apiTest{"WiFiSSID", "wifi24_ssid", "Click here for viruses", t})
+	testAPIResponse(&apiTest{
+		method:          "WiFiSSID",
+		apiStubResponse: "wifi24_ssid",
+		expectedResult:  "Click here for viruses",
+		t:               t,
+	})
 }

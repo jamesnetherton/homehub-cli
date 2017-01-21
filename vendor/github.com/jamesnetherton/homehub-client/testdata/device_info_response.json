@@ -1,0 +1,95 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 52,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/Hosts/Hosts/Host[@uid=2]",
+            "parameters": {
+              "value": {
+                "Host": {
+                  "uid": 2,
+                  "Alias": "cpe-2",
+                  "PhysAddress": "38:FD:3B:40:77:5E",
+                  "IPAddress": "192.168.1.65",
+                  "AddressSource": "STATIC",
+                  "DHCPClient": "",
+                  "LeaseTimeRemaining": 0,
+                  "AssociatedDevice": "",
+                  "Layer1Interface": "Device/Ethernet/Interfaces/Interface[PHY1]",
+                  "Layer3Interface": "Device/IP/Interfaces/Interface[Alias=IP_BR_LAN]",
+                  "VendorClassID": "",
+                  "ClientID": "",
+                  "UserClassID": "",
+                  "HostName": "",
+                  "Active": true,
+                  "LeaseStart": 0,
+                  "LeaseDuration": 0,
+                  "InterfaceType": "Ethernet",
+                  "DetectedDeviceType": "",
+                  "LastStateChange": "2017-01-08T16:37:25+0000",
+                  "UserFriendlyName": "",
+                  "UserHostName": "",
+                  "UserDeviceType": "MISCELLANEOUS",
+                  "Icon": "",
+                  "Room": "",
+                  "BlacklistEnable": true,
+                  "UnblockHoursCount": 0,
+                  "Blacklisted": false,
+                  "BlacklistStatus": false,
+                  "BlacklistedAccordingToSchedule": true,
+                  "BlacklistedSchedule": [],
+                  "Hidden": false,
+                  "Options": [],
+                  "VendorClassIDv6": "",
+                  "SysfsId": "",
+                  "IPv4Addresses": [
+                    {
+                      "uid": 1,
+                      "IPAddress": "192.168.1.65",
+                      "Active": true
+                    }
+                  ],
+                  "IPv6Addresses": [
+                    {
+                      "uid": 1,
+                      "IPAddress": "97d7:f0fd:f9a8:3f75:833f:8b2a:e41b:74ce",
+                      "Active": false
+                    }
+                  ],
+                  "DeviceTypeAssociation": "",
+                  "LastConnections": [
+                    {
+                      "uid": 64,
+                      "ConnectionTimestamp": "2017-01-03T11:45:07+0000",
+                      "DisconnectionTimestamp": "2017-01-03T13:35:31+0000"
+                    }
+                  ],
+                  "ConnectionsNbreAtLastReboot": 7
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "events": []
+  }
+}

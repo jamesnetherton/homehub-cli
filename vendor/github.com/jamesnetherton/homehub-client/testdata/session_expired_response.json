@@ -1,0 +1,22 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 2,
+    "error": {
+      "code": 16777219,
+      "description": "Invalid user session"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777242,
+          "description": "Unknown path"
+        },
+        "callbacks": []
+      }
+    ],
+    "events": []
+  }
+}

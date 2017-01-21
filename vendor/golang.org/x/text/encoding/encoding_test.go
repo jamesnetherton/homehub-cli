@@ -52,6 +52,16 @@ var basicTestCases = []struct {
 		utf8:    "Hє╙o Ш¤Я▌б",
 	},
 	{
+		e:       charmap.CodePage1047,
+		encoded: "\xc8\x54\x93\x93\x9f",
+		utf8:    "Hèll¤",
+	},
+	{
+		e:       charmap.CodePage1140,
+		encoded: "\xc8\x9f\x93\x93\xcf",
+		utf8:    "H€llõ",
+	},
+	{
 		e:       charmap.ISO8859_2,
 		encoded: "Hel\xe5\xf5",
 		utf8:    "Helĺő",
@@ -85,6 +95,11 @@ var basicTestCases = []struct {
 		e:       charmap.ISO8859_8,
 		encoded: "Hel\xf5\xed",
 		utf8:    "Helץם",
+	},
+	{
+		e:       charmap.ISO8859_9,
+		encoded: "\xdeayet",
+		utf8:    "Şayet",
 	},
 	{
 		e:       charmap.ISO8859_10,

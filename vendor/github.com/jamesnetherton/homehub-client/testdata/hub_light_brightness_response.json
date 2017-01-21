@@ -1,0 +1,64 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 1,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/Managers/HubLightControl/Brightness",
+            "parameters": {
+              "value": 50,
+              "capability": {
+                "name": "Brightness",
+                "description": "",
+                "type": "managers:Brightness xmo:int32 xmo:number xmo:value",
+                "flags": {
+                  "value": true,
+                  "config": true,
+                  "xml-child": true
+                },
+                "default-value": "100",
+                "restrictions": {
+                  "enum-values": [
+                    {
+                      "name": "0",
+                      "value": "0",
+                      "description": ""
+                    },
+                    {
+                      "name": "50",
+                      "value": "1",
+                      "description": ""
+                    },
+                    {
+                      "name": "100",
+                      "value": "2",
+                      "description": ""
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "events": []
+  }
+}

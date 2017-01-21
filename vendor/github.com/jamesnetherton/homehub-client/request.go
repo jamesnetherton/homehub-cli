@@ -17,7 +17,11 @@ import (
 	"time"
 )
 
-type request struct {
+type request interface {
+	send() (re *response, err error)
+}
+
+type genericRequest struct {
 	Body     requestBody `json:"request"`
 	authData authData
 }
@@ -41,13 +45,65 @@ type action struct {
 }
 
 type parameters struct {
-	ID             int            `json:"id,omitempty"`
-	Nonce          string         `json:"nonce,omitempty"`
-	Persistent     string         `json:"persistent,omitempty"`
-	SessionOptions sessionOptions `json:"session-options,omitempty"`
-	User           string         `json:"user,omitempty"`
-	Value          interface{}    `json:"value,omitempty"`
-	Capability     *capability    `json:"capability,omitempty"`
+	ID             int             `json:"id,omitempty"`
+	Nonce          string          `json:"nonce,omitempty"`
+	Persistent     string          `json:"persistent,omitempty"`
+	SessionOptions *sessionOptions `json:"session-options,omitempty"`
+	User           string          `json:"user,omitempty"`
+	Value          interface{}     `json:"value,omitempty"`
+	Capability     *capability     `json:"capability,omitempty"`
+	URI            string          `json:"uri,omitempty"`
+	Data           string          `json:"data,omitempty"`
+	FileName       string          `json:"FileName,omitempty"`
+	StartDate      string          `json:"startDate,omitempty"`
+	EndDate        string          `json:"endDate,omitempty"`
+}
+
+type value struct {
+	UID                            int              `json:"uid,omitempty"`
+	Alias                          string           `json:"Alias,omitempty"`
+	PhysicalAddress                string           `json:"PhysAddress,omitempty"`
+	IPAddress                      string           `json:"IPAddress,omitempty"`
+	AddressSource                  string           `json:"AddressSource,omitempty"`
+	DHCPClient                     string           `json:"DHCPClient,omitempty"`
+	LeaseTimeRemaining             int              `json:"LeaseTimeRemaining,omitempty"`
+	AssociatedDevice               string           `json:"AssociatedDevice,omitempty"`
+	HostName                       string           `json:"HostName,omitempty"`
+	Active                         bool             `json:"Active,omitempty"`
+	LeaseStart                     int              `json:"LeaseStart,omitempty"`
+	LeaseDuration                  int              `json:"LeaseDuration,omitempty"`
+	InterfaceType                  string           `json:"InterfaceType,omitempty"`
+	DetectedDeviceType             string           `json:"DetectedDeviceType,omitempty"`
+	LastStateChange                string           `json:"LastStateChange,omitempty"`
+	UserFriendlyName               string           `json:"UserFriendlyName,omitempty"`
+	UserHostName                   string           `json:"UserHostName,omitempty"`
+	UserDeviceType                 string           `json:"UserDeviceType,omitempty"`
+	BlacklistEnable                bool             `json:"BlacklistEnable,omitempty"`
+	UnblockHours                   int              `json:"UnblockHoursCount,omitempty"`
+	Blacklisted                    bool             `json:"Blacklisted,omitempty"`
+	BlacklistStatus                bool             `json:"BlacklistStatus,omitempty"`
+	BlacklistedAccordingToSchedule bool             `json:"BlacklistedAccordingToSchedule,omitempty"`
+	Hidden                         bool             `json:"Hidden,omitempty"`
+	IPv4Addresses                  []ipAddress      `json:"IPv4Addresses,omitempty"`
+	IPv6Addresses                  []ipAddress      `json:"IPv6Addresses,omitempty"`
+	LastConnections                []connectionInfo `json:"LastConnections,omitempty"`
+	ConnectionsAtLastReboot        int              `json:"ConnectionsNbreAtLastReboot,omitempty"`
+}
+
+type host struct {
+	value `json:"Host,omitempty"`
+}
+
+type ipAddress struct {
+	UID       int    `json:"uid,omitempty"`
+	IPAddress string `json:"IPAddress,omitempty"`
+	Active    bool   `json:"Active,omitempty"`
+}
+
+type connectionInfo struct {
+	UID                 int    `json:"uid,omitempty"`
+	ConnectionTimestamp string `json:"ConnectionTimestamp,omitempty"`
+	DisconnectTimestamp string `json:"DisconnectionTimestamp,omitempty"`
 }
 
 type interfaceOptions struct {
@@ -100,102 +156,8 @@ type dataModel struct {
 	Nss  []nss  `json:"nss"`
 }
 
-func newRequest(authData *authData, method string, xpath string) (req *request) {
-	var a action
-	var priority bool
-
-	// TODO: This is horrible and needs tidying up
-	if method == "logIn" {
-		authData.requestCount = 0
-		authData.sessionID = "0"
-		priority = true
-
-		newNss := newNss()
-		var nssOptions []nss
-		nssOptions = append(nssOptions, *newNss)
-
-		contextFlags := &contextFlags{
-			GetContentName: true,
-			LocalTime:      true,
-		}
-
-		capabilityFlags := &capabilityFlags{
-			Name:         true,
-			DefaultValue: false,
-			Restriction:  true,
-			Description:  false,
-		}
-
-		sessionOptions := &sessionOptions{
-			Nss:             nssOptions,
-			Language:        "ident",
-			ContextFlags:    *contextFlags,
-			CapabilityDepth: 2,
-			CapabilityFlags: *capabilityFlags,
-			TimeFormat:      "ISO_8601",
-		}
-
-		parameters := &parameters{
-			User:           authData.userName,
-			Persistent:     "true",
-			SessionOptions: *sessionOptions,
-		}
-
-		a = action{
-			ID:         0,
-			Method:     method,
-			Parameters: parameters,
-		}
-	} else {
-		authData.requestCount++
-		priority = false
-
-		capabilityFlags := &capabilityFlags{
-			Interface: true,
-		}
-
-		interfaceOptions := &interfaceOptions{
-			CapabilityFlags: *capabilityFlags,
-		}
-
-		a = action{
-			ID:               0,
-			Method:           method,
-			XPath:            xpath,
-			InterfaceOptions: interfaceOptions,
-		}
-	}
-
-	var actions []action
-	actions = append(actions, a)
-
-	random := rand.New(rand.NewSource(time.Now().UnixNano()))
-	cnonce := random.Intn(math.MaxInt32)
-
-	var ha1 string
-	if authData.nonce != "" {
-		ha1 = hexmd5(authData.userName + ":" + authData.nonce + ":" + hexmd5(authData.password))
-	} else {
-		ha1 = hexmd5(authData.userName + "::" + hexmd5(authData.password))
-	}
-	authKey := hexmd5(ha1 + ":" + strconv.Itoa(authData.requestCount) + ":" + strconv.Itoa(cnonce) + ":JSON:/cgi/json-req")
-
-	requestBody := &requestBody{
-		ID:                authData.requestCount,
-		SessionID:         authData.sessionID,
-		SessionExpiryTime: "",
-		Priority:          priority,
-		Actions:           actions,
-		CNonce:            cnonce,
-		AuthKey:           authKey,
-	}
-
-	return &request{*requestBody, *authData}
-}
-
-func (r *request) send() (re *response, err error) {
-
-	if !r.authData.isAuthenticated() && !r.isLogin() {
+func (r *genericRequest) send() (re *response, err error) {
+	if !r.authData.isAuthenticated() {
 		return nil, errors.New("User not logged in")
 	}
 
@@ -209,41 +171,10 @@ func (r *request) send() (re *response, err error) {
 	form.Add("req", string(j))
 
 	httpRequest, _ := http.NewRequest("POST", r.authData.url, strings.NewReader(form.Encode()))
-
 	httpRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 	httpRequest.Header.Set("Accept", "application/json, text/javascript, */*; q=0.01")
 	httpRequest.Header.Set("Accept-Encoding", "gzip, deflate")
 	httpRequest.Header.Set("Accept-Language", "en-GB,en-US;q=0.8,en;q=0.6")
-
-	newNss := newNss()
-	var nssOptions []nss
-	nssOptions = append(nssOptions, *newNss)
-
-	dataModel := &dataModel{
-		Name: "Internal",
-		Nss:  nssOptions,
-	}
-
-	if r.isLogin() {
-		sessionID, _ := strconv.Atoi(r.authData.sessionID)
-		authKey := hexmd5(r.authData.userName + ":" + r.authData.nonce + ":" + hexmd5(r.authData.password))
-		ha1 := authKey[:10] + hexmd5(r.authData.password) + authKey[10:len(authKey)]
-
-		sessionData := &sessionData{
-			ID:        r.authData.requestCount,
-			SessionID: sessionID,
-			Basic:     false,
-			User:      r.authData.userName,
-			DataModel: *dataModel,
-			Ha1:       ha1,
-			Nonce:     r.authData.nonce,
-		}
-
-		cj, _ := json.Marshal(sessionData)
-
-		httpRequest.AddCookie(&http.Cookie{Name: "lang", Value: "en"})
-		httpRequest.AddCookie(&http.Cookie{Name: "session", Value: url.QueryEscape(string(cj))})
-	}
 
 	dump, _ := httputil.DumpRequest(httpRequest, true)
 	log.Println(string(dump))
@@ -279,12 +210,60 @@ func (r *request) send() (re *response, err error) {
 	return response, nil
 }
 
-func (r *request) isLogin() bool {
+func (r *genericRequest) isLogin() bool {
 	return r.Body.Actions[0].Method == "logIn"
 }
 
 func newNss() *nss {
 	return &nss{Name: "gtw", URI: "http://sagemcom.com/gateway-data"}
+}
+
+func newRequestBody(authData *authData, actions []action) *requestBody {
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
+	cnonce := random.Intn(math.MaxInt32)
+
+	var ha1 string
+	if authData.nonce != "" {
+		ha1 = hexmd5(authData.userName + ":" + authData.nonce + ":" + authData.password)
+	} else {
+		ha1 = hexmd5(authData.userName + "::" + authData.password)
+	}
+	authKey := hexmd5(ha1 + ":" + strconv.Itoa(authData.requestCount) + ":" + strconv.Itoa(cnonce) + ":JSON:/cgi/json-req")
+
+	return &requestBody{
+		ID:                authData.requestCount,
+		SessionID:         authData.sessionID,
+		SessionExpiryTime: "",
+		Priority:          false,
+		Actions:           actions,
+		CNonce:            cnonce,
+		AuthKey:           authKey,
+	}
+}
+
+func newSessionData(authData *authData) *sessionData {
+	newNss := newNss()
+	var nssOptions []nss
+	nssOptions = append(nssOptions, *newNss)
+
+	dataModel := &dataModel{
+		Name: "Internal",
+		Nss:  nssOptions,
+	}
+
+	sessionID, _ := strconv.Atoi(authData.sessionID)
+	authKey := hexmd5(authData.userName + ":" + authData.nonce + ":" + authData.password)
+	ha1 := authKey[:10] + authData.password + authKey[10:len(authKey)]
+
+	return &sessionData{
+		ID:        authData.requestCount,
+		SessionID: sessionID,
+		Basic:     false,
+		User:      authData.userName,
+		DataModel: *dataModel,
+		Ha1:       ha1,
+		Nonce:     authData.nonce,
+	}
 }
 
 func hexmd5(s string) string {

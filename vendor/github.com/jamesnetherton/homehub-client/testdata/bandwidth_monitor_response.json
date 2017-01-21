@@ -1,0 +1,34 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 31,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/Services/BandwidthMonitoring",
+            "parameters": {
+              "data": "/download/206ca6811801ed4e024ac3b4bfdf87ce/586771f5/stats.csv"
+            }
+          }
+        ]
+      }
+    ],
+    "events": []
+  }
+}

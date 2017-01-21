@@ -1,0 +1,45 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 1,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/DHCPv4/Server/X_SAGEMCOM_Authoritative",
+            "parameters": {
+              "value": true,
+              "capability": {
+                "name": "X_SAGEMCOM_Authoritative",
+                "description": "",
+                "type": "xmo:boolean xmo:value",
+                "flags": {
+                  "value": true,
+                  "config": true,
+                  "xml-child": true
+                },
+                "default-value": "true"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "events": []
+  }
+}

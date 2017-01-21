@@ -1,0 +1,34 @@
+{
+  "reply": {
+    "uid": 0,
+    "id": 6,
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "actions": [
+      {
+        "uid": 1,
+        "id": 0,
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "callbacks": [
+          {
+            "uid": 1,
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "xpath": "Device/DeviceInfo/VendorLogFiles/VendorLogFile[@uid=1]",
+            "parameters": {
+              "uri": "/download/f7cfae66138d3adbd1edddbd8db2996c/58627965/eventLog"
+            }
+          }
+        ]
+      }
+    ],
+    "events": []
+  }
+}
