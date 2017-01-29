@@ -1,7 +1,6 @@
 # BT Home Hub CLI
 
-A CLI that can interact with BT Home Hub routers. So far it's only been proven against
-hub version `Home Hub 60 Type A` running firmware `SG4B100021EC`.
+A CLI that can interact with BT Home Hub routers.
 
 [![asciicast](https://asciinema.org/a/4u35xe98mgj1lc7olrl1v0gie.png)](https://asciinema.org/a/4u35xe98mgj1lc7olrl1v0gie)
 
@@ -11,7 +10,8 @@ Useful for performing quick reboots or for pulling statistics from the Home Hub.
 
 #### Using the CLI
 
-Download one of the [releases](https://github.com/jamesnetherton/homehub-cli/releases) for your operating system.
+Download one of the [releases](https://github.com/jamesnetherton/homehub-cli/releases) for your operating system. Please read the release notes to ensure
+it's compatible with your Home Hub firmware version. Or refer to the [compatibility matrix](matrix.md).
 
 For *nix and OS X:
 

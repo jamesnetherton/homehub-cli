@@ -196,17 +196,23 @@ func invokeMethod(l *readline.Instance, methodName string, args []string) {
 			inputs[0] = reflect.ValueOf(hub)
 			resp := m.Func.Call(inputs)
 
-			if t.NumOut() > 1 {
-				if resp[1].Type().String() == "error" && !resp[1].IsNil() {
-					err := fmt.Sprintf("%s", resp[1].Interface())
+			if t.NumOut() > 0 {
+				err := ""
+				for i := 0; i < t.NumOut(); i++ {
+					if resp[i].Type().String() == "error" && !resp[i].IsNil() {
+						err = fmt.Sprintf("%s", resp[i].Interface())
+						break
+					}
+				}
+				if len(err) > 0 {
 					if err == "Invalid user session" {
 						fmt.Println("Login session has expired")
 						hub = nil
 						invokeMethod(l, methodName, args)
 					} else {
-						fmt.Printf("Error executing command '%s': %s", methodName, err)
+						fmt.Printf("Error executing command '%s': %s\n", methodName, err)
 					}
-				} else {
+				} else if resp[0].Type().String() != "error" {
 					fmt.Println(resp[0].String())
 				}
 			}
