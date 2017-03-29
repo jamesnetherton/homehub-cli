@@ -81,6 +81,10 @@ func (c *CommandLineParser) Parse() (result bool, err error) {
 
 		return true, nil
 	}
+	
+	if commandName == "--help" {
+		return false, nil
+	}
 	return false, errors.New("Unknown command: " + commandName)
 }
 

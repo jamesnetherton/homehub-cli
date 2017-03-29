@@ -37,7 +37,9 @@ func main() {
 		commandLine := cmd.NewCommandLineParser(commands, os.Args[1:])
 		success, err := commandLine.Parse()
 		if !success {
-			fmt.Println(err)
+			if err != nil {
+				fmt.Printf("%s\n\n", err.Error())
+			}
 			commandLine.PrintUsage()
 			os.Exit(1)
 		}
