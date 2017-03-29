@@ -1,44 +1,44 @@
 {
   "reply": {
-    "uid": 0,
-    "id": 2,
-    "error": {
-      "code": 16777216,
-      "description": "Ok"
-    },
     "actions": [
       {
-        "uid": 1,
-        "id": 0,
-        "error": {
-          "code": 16777238,
-          "description": "Applied"
-        },
         "callbacks": [
           {
-            "uid": 1,
+            "parameters": {
+              "capability": {
+                "description": "",
+                "flags": {
+                  "statistic": true,
+                  "value": true,
+                  "xml-child": true
+                },
+                "name": "BytesSent",
+                "type": "xmo:uint64 xmo:number xmo:value"
+              },
+              "value": "11223344"
+            },
             "result": {
-              "code": 16777238,
+              "code": 1.6777238e+07,
               "description": "Applied"
             },
-            "xpath": "Device/IP/Interfaces/Interface[@uid=3]/Stats/BytesSent",
-            "parameters": {
-              "value": "11223344",
-              "capability": {
-                "name": "BytesSent",
-                "description": "TBD",
-                "type": "xmo:uint64 xmo:number xmo:value",
-                "flags": {
-                  "value": true,
-                  "statistic": true,
-                  "xml-child": true
-                }
-              }
-            }
+            "uid": 1,
+            "xpath": "Device/IP/Interfaces/Interface[@uid='3']/Stats/BytesSent"
           }
-        ]
+        ],
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
       }
     ],
-    "events": []
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
   }
 }

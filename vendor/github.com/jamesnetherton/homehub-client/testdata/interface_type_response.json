@@ -1,68 +1,68 @@
 {
   "reply": {
-    "uid": 0,
-    "id": 1,
-    "error": {
-      "code": 16777216,
-      "description": "Ok"
-    },
     "actions": [
       {
-        "uid": 1,
-        "id": 0,
-        "error": {
-          "code": 16777238,
-          "description": "Applied"
-        },
         "callbacks": [
           {
-            "uid": 1,
-            "result": {
-              "code": 16777238,
-              "description": "Applied"
-            },
-            "xpath": "Device/Services/DeviceConfig/LastSuccesfulWanType",
             "parameters": {
-              "value": "VDSL",
               "capability": {
-                "name": "LastSuccesfulWanType",
                 "description": "",
-                "type": "deviceconfig:LastSuccesfulWanType xmo:int32 xmo:number xmo:value",
                 "flags": {
-                  "value": true,
                   "config": true,
+                  "value": true,
                   "xml-child": true
                 },
+                "name": "LastSuccesfulWanType",
                 "restrictions": {
                   "enum-values": [
                     {
+                      "description": "",
                       "name": "NONE",
-                      "value": "0",
-                      "description": ""
+                      "value": "0"
                     },
                     {
+                      "description": "",
                       "name": "DSL",
-                      "value": "1",
-                      "description": ""
+                      "value": "1"
                     },
                     {
+                      "description": "",
                       "name": "FTTX",
-                      "value": "2",
-                      "description": ""
+                      "value": "2"
                     },
                     {
+                      "description": "",
                       "name": "VDSL",
-                      "value": "3",
-                      "description": ""
+                      "value": "3"
                     }
                   ]
-                }
-              }
-            }
+                },
+                "type": "deviceconfig:LastSuccesfulWanType xmo:int32 xmo:number xmo:value"
+              },
+              "value": "VDSL"
+            },
+            "result": {
+              "code": 1.6777238e+07,
+              "description": "Applied"
+            },
+            "uid": 1,
+            "xpath": "Device/Services/DeviceConfig/LastSuccesfulWanType"
           }
-        ]
+        ],
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
       }
     ],
-    "events": []
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
   }
 }

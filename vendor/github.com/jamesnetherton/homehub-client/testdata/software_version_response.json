@@ -1,45 +1,47 @@
 {
   "reply": {
-    "uid": 0,
-    "id": 18,
-    "error": {
-      "code": 16777216,
-      "description": "Ok"
-    },
     "actions": [
       {
-        "uid": 1,
-        "id": 0,
-        "error": {
-          "code": 16777238,
-          "description": "Applied"
-        },
         "callbacks": [
           {
-            "uid": 1,
+            "parameters": {
+              "capability": {
+                "description": "",
+                "flags": {
+                  "status": true,
+                  "value": true,
+                  "xml-child": true
+                },
+                "name": "ExternalFirmwareVersion",
+                "restrictions": {
+                  "max-length": 64
+                },
+                "type": "devinfo:DeviceInfo:ExternalFirmwareVersion xmo:str xmo:value"
+              },
+              "value": "SG4B10002244"
+            },
             "result": {
-              "code": 16777238,
+              "code": 1.6777238e+07,
               "description": "Applied"
             },
-            "xpath": "Device/DeviceInfo/ExternalFirmwareVersion",
-            "parameters": {
-              "session-options": {
-                "nss": null,
-                "language": "",
-                "context-flags": {
-                  "get-content-name": false,
-                  "local-time": false
-                },
-                "capability-flags": {},
-                "capability-depth": 0,
-                "time-format": ""
-              },
-              "value": "SG4B100021AA"
-            }
+            "uid": 1,
+            "xpath": "Device/DeviceInfo/ExternalFirmwareVersion"
           }
         ],
-        "events": null
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
       }
-    ]
+    ],
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
   }
 }

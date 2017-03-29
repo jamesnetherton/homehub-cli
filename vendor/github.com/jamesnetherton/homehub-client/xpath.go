@@ -70,7 +70,7 @@ const (
 	statsWanStats                                           string = "Device/IP/Interfaces"
 	statsDataUsageDataSent                                  string = "Device/IP/Interfaces/Interface[Alias=\"IP_DATA\"]/Stats/BytesSent"
 	statsDataUsageDataReceived                              string = "Device/IP/Interfaces/Interface[Alias=\"IP_DATA\"]/Stats/BytesReceived"
-	ethernetDeviceDevicesList                               string = "Device/Hosts/Hosts/Host[@uid=\"#\"]"
+	ethernetDeviceDevicesList                               string = "Device/Hosts/Hosts/Host[@uid='#']"
 	internetConnectivityLastPPPConnectionDsl                string = "Device/PPP/Interfaces/Interface[Alias='PPP_DSL_DATA']/LastPPPConnections"
 	internetConnectivityPppFTTHPassword                     string = "Device/PPP/Interfaces/Interface[Alias='PPP_FTTH_DATA']/Password"
 	internetConnectivityPppFTTHEnable                       string = "Device/PPP/Interfaces/Interface[Alias='PPP_FTTH_DATA']/Enable"

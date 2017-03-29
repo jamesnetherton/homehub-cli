@@ -1,45 +1,84 @@
 {
   "reply": {
-    "uid": 0,
-    "id": 24,
-    "error": {
-      "code": 16777216,
-      "description": "Ok"
-    },
     "actions": [
       {
-        "uid": 1,
-        "id": 0,
-        "error": {
-          "code": 16777238,
-          "description": "Applied"
-        },
         "callbacks": [
           {
-            "uid": 1,
-            "result": {
-              "code": 16777238,
-              "description": "Applied"
-            },
-            "xpath": "Device/IP/Interfaces/Interface[@uid='3']/Status",
             "parameters": {
-              "session-options": {
-                "nss": null,
-                "language": "",
-                "context-flags": {
-                  "get-content-name": false,
-                  "local-time": false
+              "capability": {
+                "default-value": "DOWN",
+                "description": "",
+                "flags": {
+                  "status": true,
+                  "value": true,
+                  "xml-child": true
                 },
-                "capability-flags": {},
-                "capability-depth": 0,
-                "time-format": ""
+                "name": "Status",
+                "restrictions": {
+                  "enum-values": [
+                    {
+                      "description": "",
+                      "name": "UP",
+                      "value": "0"
+                    },
+                    {
+                      "description": "",
+                      "name": "DOWN",
+                      "value": "1"
+                    },
+                    {
+                      "description": "",
+                      "name": "UNKNOWN",
+                      "value": "2"
+                    },
+                    {
+                      "description": "",
+                      "name": "DORMANT",
+                      "value": "3"
+                    },
+                    {
+                      "description": "",
+                      "name": "NOTPRESENT",
+                      "value": "4"
+                    },
+                    {
+                      "description": "",
+                      "name": "LOWERLAYERDOWN",
+                      "value": "5"
+                    },
+                    {
+                      "description": "",
+                      "name": "ERROR",
+                      "value": "6"
+                    }
+                  ]
+                },
+                "type": "interface:Interface:Status xmo:int32 xmo:number xmo:value"
               },
               "value": "UP"
-            }
+            },
+            "result": {
+              "code": 1.6777238e+07,
+              "description": "Applied"
+            },
+            "uid": 1,
+            "xpath": "Device/IP/Interfaces/Interface[@uid='3']/Status"
           }
         ],
-        "events": null
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
       }
-    ]
+    ],
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
   }
 }

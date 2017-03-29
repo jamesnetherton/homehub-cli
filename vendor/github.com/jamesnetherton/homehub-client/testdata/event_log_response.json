@@ -1,34 +1,34 @@
 {
   "reply": {
-    "uid": 0,
-    "id": 6,
-    "error": {
-      "code": 16777216,
-      "description": "Ok"
-    },
     "actions": [
       {
-        "uid": 1,
-        "id": 0,
-        "error": {
-          "code": 16777238,
-          "description": "Applied"
-        },
         "callbacks": [
           {
-            "uid": 1,
+            "parameters": {
+              "uri": "/download/4c764430406ebfa566978797723c57b4/5896f3d6/eventLog"
+            },
             "result": {
-              "code": 16777238,
+              "code": 1.6777238e+07,
               "description": "Applied"
             },
-            "xpath": "Device/DeviceInfo/VendorLogFiles/VendorLogFile[@uid=1]",
-            "parameters": {
-              "uri": "/download/f7cfae66138d3adbd1edddbd8db2996c/58627965/eventLog"
-            }
+            "uid": 1,
+            "xpath": "Device/DeviceInfo/VendorLogFiles/VendorLogFile[@uid='1']"
           }
-        ]
+        ],
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
       }
     ],
-    "events": []
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
   }
 }

@@ -1,45 +1,50 @@
 {
   "reply": {
-    "uid": 0,
-    "id": 53,
-    "error": {
-      "code": 16777216,
-      "description": "Ok"
-    },
     "actions": [
       {
-        "uid": 1,
-        "id": 0,
-        "error": {
-          "code": 16777238,
-          "description": "Applied"
-        },
         "callbacks": [
           {
-            "uid": 1,
+            "parameters": {
+              "capability": {
+                "description": "",
+                "flags": {
+                  "config": true,
+                  "value": true,
+                  "xml-child": true
+                },
+                "name": "DhcpLanMinAddress",
+                "restrictions": {
+                  "max-length": 15,
+                  "reg-exp": {
+                    "pattern": "^(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]))?$"
+                  }
+                },
+                "type": "types:IPv4Address xmo:str xmo:value"
+              },
+              "value": "192.168.1.68"
+            },
             "result": {
-              "code": 16777238,
+              "code": 1.6777238e+07,
               "description": "Applied"
             },
-            "xpath": "Device/Managers/NetworkData/DhcpLanMinAddress",
-            "parameters": {
-              "session-options": {
-                "nss": null,
-                "language": "",
-                "context-flags": {
-                  "get-content-name": false,
-                  "local-time": false
-                },
-                "capability-flags": {},
-                "capability-depth": 0,
-                "time-format": ""
-              },
-              "value": "192.168.1.64"
-            }
+            "uid": 1,
+            "xpath": "Device/Managers/NetworkData/DhcpLanMinAddress"
           }
         ],
-        "events": null
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
       }
-    ]
+    ],
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
   }
 }

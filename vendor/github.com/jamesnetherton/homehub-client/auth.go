@@ -8,7 +8,3 @@ type authData struct {
 	nonce        string
 	requestCount int
 }
-
-func (a *authData) isAuthenticated() bool {
-	return a.url != "" && a.userName != "" && a.password != "" && a.sessionID != "" && a.nonce != ""
-}

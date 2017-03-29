@@ -3,8 +3,6 @@ package homehub
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
-	"strconv"
 	"strings"
 )
 
@@ -53,38 +51,8 @@ type responseEvent struct {
 	//TODO: Events not supported right now
 }
 
-func (r *response) getValue() string {
-	value := ""
-
-	if r.ResponseBody.Reply != nil {
-		params := r.ResponseBody.Reply.ResponseActions[0].ResponseCallbacks[0].Parameters
-		vo := reflect.ValueOf(params.Value)
-
-		if params.Capability == nil {
-			value = vo.String()
-		} else {
-			capType := params.Capability.Type
-			switch {
-			case strings.Contains(capType, "deviceconfig:LastSuccesfulWanType"):
-				value = vo.String()
-				break
-			case strings.Contains(capType, "int32"):
-				value = strconv.FormatFloat(vo.Float(), 'f', -1, 64)
-				break
-			case strings.Contains(capType, "boolean"):
-				value = strconv.FormatBool(vo.Bool())
-				break
-			default:
-				value = vo.String()
-			}
-		}
-	}
-
-	return value
-}
-
-func (r *response) getValues(xpath string) [][]value {
-	var res [][]value
+func (r *response) getValues(xpath string) []DeviceDetail {
+	var devices []DeviceDetail
 
 	if r.ResponseBody.Reply != nil {
 		for _, action := range r.ResponseBody.Reply.ResponseActions {
@@ -92,16 +60,16 @@ func (r *response) getValues(xpath string) [][]value {
 			if c.XPath == xpath {
 				p := c.Parameters
 				if strings.HasPrefix(fmt.Sprintf("%s", p.Value), "[") {
-					v := &[]value{}
+					v := &[]DeviceDetail{}
 					x, _ := json.Marshal(p.Value)
 					json.Unmarshal(x, v)
-					res = append(res, *v)
+					devices = append(devices, (*v)...)
 				}
 			}
 		}
 	}
 
-	return res
+	return devices
 }
 
 func (r *response) getHost() *host {

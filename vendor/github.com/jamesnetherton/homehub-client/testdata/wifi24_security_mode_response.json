@@ -1,46 +1,93 @@
 {
   "reply": {
-    "uid": 0,
-    "id": 13,
-    "error": {
-      "code": 16777216,
-      "description": "Ok"
-    },
     "actions": [
       {
-        "uid": 1,
-        "id": 0,
-        "error": {
-          "code": 16777238,
-          "description": "Applied"
-        },
         "callbacks": [
           {
-            "uid": 1,
+            "parameters": {
+              "capability": {
+                "description": "",
+                "flags": {
+                  "config": true,
+                  "value": true,
+                  "xml-child": true
+                },
+                "name": "ModeEnabled",
+                "restrictions": {
+                  "enum-values": [
+                    {
+                      "description": "",
+                      "name": "NONE",
+                      "value": "0"
+                    },
+                    {
+                      "description": "",
+                      "name": "WEP_64",
+                      "value": "1"
+                    },
+                    {
+                      "description": "",
+                      "name": "WEP_128",
+                      "value": "2"
+                    },
+                    {
+                      "description": "",
+                      "name": "WPA_PERSONAL",
+                      "value": "3"
+                    },
+                    {
+                      "description": "",
+                      "name": "WPA2_PERSONAL",
+                      "value": "4"
+                    },
+                    {
+                      "description": "",
+                      "name": "WPA_WPA2_PERSONAL",
+                      "value": "5"
+                    },
+                    {
+                      "description": "",
+                      "name": "WPA_ENTERPRISE",
+                      "value": "6"
+                    },
+                    {
+                      "description": "",
+                      "name": "WPA2_ENTERPRISE",
+                      "value": "7"
+                    },
+                    {
+                      "description": "",
+                      "name": "WPA_WPA2_ENTERPRISE",
+                      "value": "8"
+                    }
+                  ]
+                },
+                "type": "wifi:AccessPoint:Security:ModeEnabled xmo:int32 xmo:number xmo:value"
+              },
+              "value": "ULTRA_SECURE_MODE"
+            },
             "result": {
-              "code": 16777238,
+              "code": 1.6777238e+07,
               "description": "Applied"
             },
-            "xpath": "Device/WiFi/AccessPoints/AccessPoint[@uid='1']/Security/ModeEnabled",
-            "parameters": {
-              "session-options": {
-                "nss": null,
-                "language": "",
-                "context-flags": {
-                  "get-content-name": false,
-                  "local-time": false
-                },
-                "capability-flags": {},
-                "capability-depth": 0,
-                "time-format": ""
-              },
-              "meta": "Yes this is a fake mode!",
-              "value": "ULTRA_SECURE_MODE"
-            }
+            "uid": 1,
+            "xpath": "Device/WiFi/AccessPoints/AccessPoint[@uid='1']/Security/ModeEnabled"
           }
         ],
-        "events": null
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
       }
-    ]
+    ],
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
   }
 }

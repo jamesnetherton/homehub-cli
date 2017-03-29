@@ -9,7 +9,7 @@ type bandwidthMonitorRequest struct {
 	genericRequest
 }
 
-func newBandwidthMonitorRequest(authData *authData) (req *eventLogRequest) {
+func newBandwidthMonitorRequest(authData *authData) (req *bandwidthMonitorRequest) {
 	authData.requestCount++
 
 	// TODO: Enable dates to be configurable
@@ -31,7 +31,7 @@ func newBandwidthMonitorRequest(authData *authData) (req *eventLogRequest) {
 	actions = append(actions, a)
 	requestBody := newRequestBody(authData, actions)
 
-	return &eventLogRequest{
+	return &bandwidthMonitorRequest{
 		genericRequest: genericRequest{
 			*requestBody,
 			*authData,

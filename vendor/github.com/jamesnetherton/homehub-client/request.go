@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
 	"math"
 	"math/rand"
 	"net/http"
@@ -57,50 +56,54 @@ type parameters struct {
 	FileName       string          `json:"FileName,omitempty"`
 	StartDate      string          `json:"startDate,omitempty"`
 	EndDate        string          `json:"endDate,omitempty"`
+	Source         string          `json:"source,omitempty"`
 }
 
-type value struct {
-	UID                            int              `json:"uid,omitempty"`
-	Alias                          string           `json:"Alias,omitempty"`
-	PhysicalAddress                string           `json:"PhysAddress,omitempty"`
-	IPAddress                      string           `json:"IPAddress,omitempty"`
-	AddressSource                  string           `json:"AddressSource,omitempty"`
-	DHCPClient                     string           `json:"DHCPClient,omitempty"`
-	LeaseTimeRemaining             int              `json:"LeaseTimeRemaining,omitempty"`
-	AssociatedDevice               string           `json:"AssociatedDevice,omitempty"`
-	HostName                       string           `json:"HostName,omitempty"`
-	Active                         bool             `json:"Active,omitempty"`
-	LeaseStart                     int              `json:"LeaseStart,omitempty"`
-	LeaseDuration                  int              `json:"LeaseDuration,omitempty"`
-	InterfaceType                  string           `json:"InterfaceType,omitempty"`
-	DetectedDeviceType             string           `json:"DetectedDeviceType,omitempty"`
-	LastStateChange                string           `json:"LastStateChange,omitempty"`
-	UserFriendlyName               string           `json:"UserFriendlyName,omitempty"`
-	UserHostName                   string           `json:"UserHostName,omitempty"`
-	UserDeviceType                 string           `json:"UserDeviceType,omitempty"`
-	BlacklistEnable                bool             `json:"BlacklistEnable,omitempty"`
-	UnblockHours                   int              `json:"UnblockHoursCount,omitempty"`
-	Blacklisted                    bool             `json:"Blacklisted,omitempty"`
-	BlacklistStatus                bool             `json:"BlacklistStatus,omitempty"`
-	BlacklistedAccordingToSchedule bool             `json:"BlacklistedAccordingToSchedule,omitempty"`
-	Hidden                         bool             `json:"Hidden,omitempty"`
-	IPv4Addresses                  []ipAddress      `json:"IPv4Addresses,omitempty"`
-	IPv6Addresses                  []ipAddress      `json:"IPv6Addresses,omitempty"`
-	LastConnections                []connectionInfo `json:"LastConnections,omitempty"`
-	ConnectionsAtLastReboot        int              `json:"ConnectionsNbreAtLastReboot,omitempty"`
+// DeviceDetail defines a device connected to the Home Hub
+type DeviceDetail struct {
+	UID                            int                `json:"uid,omitempty"`
+	Alias                          string             `json:"Alias,omitempty"`
+	PhysicalAddress                string             `json:"PhysAddress,omitempty"`
+	IPAddress                      string             `json:"IPAddress,omitempty"`
+	AddressSource                  string             `json:"AddressSource,omitempty"`
+	DHCPClient                     string             `json:"DHCPClient,omitempty"`
+	LeaseTimeRemaining             int                `json:"LeaseTimeRemaining,omitempty"`
+	AssociatedDevice               string             `json:"AssociatedDevice,omitempty"`
+	HostName                       string             `json:"HostName,omitempty"`
+	Active                         bool               `json:"Active,omitempty"`
+	LeaseStart                     int                `json:"LeaseStart,omitempty"`
+	LeaseDuration                  int                `json:"LeaseDuration,omitempty"`
+	InterfaceType                  string             `json:"InterfaceType,omitempty"`
+	DetectedDeviceType             string             `json:"DetectedDeviceType,omitempty"`
+	LastStateChange                string             `json:"LastStateChange,omitempty"`
+	UserFriendlyName               string             `json:"UserFriendlyName,omitempty"`
+	UserHostName                   string             `json:"UserHostName,omitempty"`
+	UserDeviceType                 string             `json:"UserDeviceType,omitempty"`
+	BlacklistEnable                bool               `json:"BlacklistEnable,omitempty"`
+	UnblockHours                   int                `json:"UnblockHoursCount,omitempty"`
+	Blacklisted                    bool               `json:"Blacklisted,omitempty"`
+	BlacklistStatus                bool               `json:"BlacklistStatus,omitempty"`
+	BlacklistedAccordingToSchedule bool               `json:"BlacklistedAccordingToSchedule,omitempty"`
+	Hidden                         bool               `json:"Hidden,omitempty"`
+	IPv4Addresses                  []IPAddress        `json:"IPv4Addresses,omitempty"`
+	IPv6Addresses                  []IPAddress        `json:"IPv6Addresses,omitempty"`
+	LastConnections                []ConnectionDetail `json:"LastConnections,omitempty"`
+	ConnectionsAtLastReboot        int                `json:"ConnectionsNbreAtLastReboot,omitempty"`
 }
 
 type host struct {
-	value `json:"Host,omitempty"`
+	DeviceDetail `json:"Host,omitempty"`
 }
 
-type ipAddress struct {
+// IPAddress defines an IPV4 or IPV6 address
+type IPAddress struct {
 	UID       int    `json:"uid,omitempty"`
 	IPAddress string `json:"IPAddress,omitempty"`
 	Active    bool   `json:"Active,omitempty"`
 }
 
-type connectionInfo struct {
+// ConnectionDetail defines connection information related to a device connected to the Home Hub
+type ConnectionDetail struct {
 	UID                 int    `json:"uid,omitempty"`
 	ConnectionTimestamp string `json:"ConnectionTimestamp,omitempty"`
 	DisconnectTimestamp string `json:"DisconnectionTimestamp,omitempty"`
@@ -157,15 +160,11 @@ type dataModel struct {
 }
 
 func (r *genericRequest) send() (re *response, err error) {
-	if !r.authData.isAuthenticated() {
-		return nil, errors.New("User not logged in")
-	}
-
 	j, err := json.Marshal(r)
 	if err != nil {
 		return nil, err
 	}
-	log.Println(string(j))
+	debug.Println(string(j))
 
 	form := url.Values{}
 	form.Add("req", string(j))
@@ -177,7 +176,7 @@ func (r *genericRequest) send() (re *response, err error) {
 	httpRequest.Header.Set("Accept-Language", "en-GB,en-US;q=0.8,en;q=0.6")
 
 	dump, _ := httputil.DumpRequest(httpRequest, true)
-	log.Println(string(dump))
+	debug.Println(string(dump))
 
 	httpClient := &http.Client{}
 	httpResponse, err := httpClient.Do(httpRequest)
@@ -186,7 +185,7 @@ func (r *genericRequest) send() (re *response, err error) {
 	}
 
 	dump, _ = httputil.DumpResponse(httpResponse, true)
-	log.Println(string(dump))
+	debug.Println(string(dump))
 
 	defer httpResponse.Body.Close()
 	response := &response{}

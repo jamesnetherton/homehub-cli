@@ -6,6 +6,10 @@ build:
 	rm -rf build
 	go build -o build/$(NAME) $(NAME).go
 
+test:
+	go test -v github.com/jamesnetherton/homehub-cli/cmd \
+	           github.com/jamesnetherton/homehub-cli/cli
+
 release: build
 	rm -rf release && mkdir release
 	mkdir -p build/linux  && GOOS=linux  go build -ldflags "-X main.version=$(VERSION)" -o build/linux/$(NAME)

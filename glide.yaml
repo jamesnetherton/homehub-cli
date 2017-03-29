@@ -2,8 +2,6 @@ package: github.com/jamesnetherton/homehub-cli
 import:
 - package: github.com/chzyer/readline
   version: ~1.4.0
+- package: github.com/bgentry/speakeasy
 - package: github.com/jamesnetherton/homehub-client
-  version: ~0.1.0
-- package: github.com/spf13/cobra
-  subpackages:
-  - cobra
+  version: ~0.3.0

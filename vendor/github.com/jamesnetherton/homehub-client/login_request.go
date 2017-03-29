@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -73,7 +72,7 @@ func (r *loginRequest) send() (re *response, err error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Println(string(j))
+	debug.Println(string(j))
 
 	form := url.Values{}
 	form.Add("req", string(j))
@@ -90,7 +89,7 @@ func (r *loginRequest) send() (re *response, err error) {
 	httpRequest.AddCookie(&http.Cookie{Name: "session", Value: url.QueryEscape(string(cj))})
 
 	dump, _ := httputil.DumpRequest(httpRequest, true)
-	log.Println(string(dump))
+	debug.Println(string(dump))
 
 	httpClient := &http.Client{}
 	httpResponse, err := httpClient.Do(httpRequest)
@@ -99,7 +98,7 @@ func (r *loginRequest) send() (re *response, err error) {
 	}
 
 	dump, _ = httputil.DumpResponse(httpResponse, true)
-	log.Println(string(dump))
+	debug.Println(string(dump))
 
 	defer httpResponse.Body.Close()
 	response := &response{}

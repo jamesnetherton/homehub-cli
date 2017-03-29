@@ -1,45 +1,44 @@
 {
   "reply": {
-    "uid": 0,
-    "id": 31,
-    "error": {
-      "code": 16777216,
-      "description": "Ok"
-    },
     "actions": [
       {
-        "uid": 1,
-        "id": 0,
-        "error": {
-          "code": 16777238,
-          "description": "Applied"
-        },
         "callbacks": [
           {
-            "uid": 1,
-            "result": {
-              "code": 16777238,
-              "description": "Applied"
-            },
-            "xpath": "Device/Time/CurrentLocalTime",
             "parameters": {
-              "session-options": {
-                "nss": null,
-                "language": "",
-                "context-flags": {
-                  "get-content-name": false,
-                  "local-time": false
+              "capability": {
+                "description": "",
+                "flags": {
+                  "statistic": true,
+                  "value": true,
+                  "xml-child": true
                 },
-                "capability-flags": {},
-                "capability-depth": 0,
-                "time-format": ""
+                "name": "CurrentLocalTime",
+                "type": "xmo:time xmo:value"
               },
               "value": "2016-08-30T19:48:55+0100"
-            }
+            },
+            "result": {
+              "code": 1.6777238e+07,
+              "description": "Applied"
+            },
+            "uid": 1,
+            "xpath": "Device/Time/CurrentLocalTime"
           }
         ],
-        "events": null
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
       }
-    ]
+    ],
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
   }
 }

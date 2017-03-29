@@ -1,59 +1,10 @@
-hash: 70758eff5b8c4c9170dc0ae59b7a289c39aa4ef86b6305759d2dcd09de09379a
-updated: 2017-01-21T17:55:55.64298119Z
+hash: 2a32c8c91099e82ed3c5a60a3e5ae7926556d39ae7db0f2fa243e68ec82431bf
+updated: 2017-03-28T20:56:16.213401526+01:00
 imports:
+- name: github.com/bgentry/speakeasy
+  version: 675b82c74c0ed12283ee81ba8a534c8982c07b85
 - name: github.com/chzyer/readline
   version: 62c6fe6193755f722b8b8788aa7357be55a50ff1
-- name: github.com/fsnotify/fsnotify
-  version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
-- name: github.com/hashicorp/hcl
-  version: 39fa3a62ba92cf550eb0f9cfb84757ef79b8aa30
-  subpackages:
-  - hcl/ast
-  - hcl/parser
-  - hcl/scanner
-  - hcl/strconv
-  - hcl/token
-  - json/parser
-  - json/scanner
-  - json/token
-- name: github.com/inconshreveable/mousetrap
-  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jamesnetherton/homehub-client
-  version: f3f4f09ec3ab91f7d80c455dd0746c691666486a
-- name: github.com/magiconair/properties
-  version: b3b15ef068fd0b17ddf408a23669f20811d194d2
-- name: github.com/mitchellh/mapstructure
-  version: ed105d635dfa9ea7133f7c79f1eb36203fc3a156
-- name: github.com/pelletier/go-buffruneio
-  version: df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d
-- name: github.com/pelletier/go-toml
-  version: a1f048ba24490f9b0674a67e1ce995d685cddf4a
-- name: github.com/spf13/afero
-  version: 72b31426848c6ef12a7a8e216708cb0d1530f074
-  subpackages:
-  - mem
-- name: github.com/spf13/cast
-  version: 56a7ecbeb18dde53c6db4bd96b541fd9741b8d44
-- name: github.com/spf13/cobra
-  version: 9c28e4bbd74e5c3ed7aacbc552b2cab7cfdfe744
-  subpackages:
-  - cobra
-  - cobra/cmd
-- name: github.com/spf13/jwalterweatherman
-  version: fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66
-- name: github.com/spf13/pflag
-  version: 103ce5cd2042f2fe629c1957abb64ab3e7f50235
-- name: github.com/spf13/viper
-  version: 5ed0fc31f7f453625df314d8e66b9791e8d13003
-- name: golang.org/x/sys
-  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
-  subpackages:
-  - unix
-- name: golang.org/x/text
-  version: 11dbc599981ccdf4fb18802a28392a8bcf7a9395
-  subpackages:
-  - transform
-  - unicode/norm
-- name: gopkg.in/yaml.v2
-  version: e4d366fc3c7938e2958e662b4258c7a89e1f0e3e
+  version: 31b48a1d30715b2f51afc707b8a86fbbd715f3f6
 testImports: []

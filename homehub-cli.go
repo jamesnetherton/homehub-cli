@@ -1,125 +1,53 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"io"
 	"os"
-	"reflect"
 	"strconv"
-	"strings"
 
+	"github.com/bgentry/speakeasy"
 	"github.com/chzyer/readline"
-	"github.com/jamesnetherton/homehub-client"
-	"github.com/spf13/cobra"
-	"github.com/spf13/cobra/cobra/cmd"
-)
-
-var (
-	hubURL   string
-	userName string
-	password string
-	hub      *homehub.Hub
+	"github.com/jamesnetherton/homehub-cli/cli"
+	"github.com/jamesnetherton/homehub-cli/cmd"
+	"github.com/jamesnetherton/homehub-cli/service"
+	homehub "github.com/jamesnetherton/homehub-client"
 )
 
 func main() {
-	cmd.RootCmd.PersistentFlags().StringVarP(&hubURL, "huburl", "r", "http://192.168.1.254", "URL of the home hub router")
-	cmd.RootCmd.PersistentFlags().StringVarP(&userName, "username", "u", "admin", "The hub router user name")
-	cmd.RootCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "The home hub router password")
 
-	cmdHandler := func(cmd *cobra.Command, args []string) {
-		if !stringIsEmpty(hubURL) && !stringIsEmpty(userName) && !stringIsEmpty(password) {
-			hub = homehub.New(hubURL, userName, password)
-			success, _ := hub.Login()
-
-			if !success {
-				fmt.Println("Login failed")
-				return
-			}
-
-			invokeMethod(nil, cmd.Name(), args)
-		} else {
-			cmd.Usage()
-		}
-	}
-
-	for _, funcName := range getFuncNames() {
-		cmd.RootCmd.AddCommand(&cobra.Command{
-			Use: funcName,
-			Run: cmdHandler,
-		})
-	}
-
-	helpFunc := func(cmd *cobra.Command, args []string) {
-		fmt.Println("Usage:\n  homehub-cli [command] --huburl=<home hub url> --username=<home hub username> --password=<home hub password>")
-		fmt.Println("\nCommands:\n ", strings.Join(getFuncNames(), "\n  "))
-	}
-
-	usageFunc := func(cmd *cobra.Command) error {
-		fmt.Printf("Usage:\n  homehub-cli %s --huburl=<home hub url> --username=<home hub username> --password=<home hub password>\n", cmd.Name())
-		return nil
-	}
-
-	cmd.RootCmd.SetHelpFunc(helpFunc)
-	cmd.RootCmd.SetUsageFunc(usageFunc)
-	cmd.RootCmd.SilenceErrors = true
+	commands := initCommands()
 
 	if len(os.Args[1:]) == 0 {
-		banner()
+		readLine, err := readline.NewEx(&readline.Config{
+			Prompt:          initPrompt(),
+			InterruptPrompt: "^C",
+			EOFPrompt:       "exit",
+		})
 
-		l, err := createReadline()
 		if err != nil {
 			panic(err)
 		}
-		defer l.Close()
 
-		for {
-			line, err := l.Readline()
-
-			if err == readline.ErrInterrupt {
-				if len(line) == 0 {
-					break
-				} else {
-					continue
-				}
-			} else if err == io.EOF {
-				break
-			}
-
-			line = strings.TrimSpace(line)
-			if !stringIsEmpty(line) {
-				if !strings.HasPrefix(line, "Login") {
-					cmd := strings.Split(line, " ")
-					methodName := cmd[0]
-					args := append(cmd[:0], cmd[1:]...)
-					invokeMethod(l, methodName, args)
-				} else {
-					hub = doLogin(l)
-				}
-			}
-		}
+		cli := cli.NewCLI(commands, readLine)
+		cli.Run()
 	} else {
-		err := cmd.RootCmd.Execute()
-		if err != nil {
-			helpFunc(nil, nil)
+		commandLine := cmd.NewCommandLineParser(commands, os.Args[1:])
+		success, err := commandLine.Parse()
+		if !success {
+			fmt.Println(err)
+			commandLine.PrintUsage()
+			os.Exit(1)
 		}
 	}
 }
 
-func createReadline() (l *readline.Instance, err error) {
-	return readline.NewEx(&readline.Config{
-		Prompt:          getUserPrompt(),
-		AutoComplete:    readline.NewPrefixCompleter(readline.PcItemDynamic(listFuncNames())),
-		InterruptPrompt: "^C",
-		EOFPrompt:       "exit",
-	})
-}
-
-func getUserPrompt() string {
+func initPrompt() string {
 	var user string
 
-	if !stringIsEmpty(os.Getenv("USER")) {
+	if !service.StringIsEmpty(os.Getenv("USER")) {
 		user = os.Getenv("USER")
-	} else if !stringIsEmpty(os.Getenv("USERNAME")) {
+	} else if !service.StringIsEmpty(os.Getenv("USERNAME")) {
 		user = os.Getenv("USERNAME")
 	} else {
 		user = "unknown"
@@ -128,136 +56,454 @@ func getUserPrompt() string {
 	return fmt.Sprintf("%s@homehub: ", user)
 }
 
-func listFuncNames() func(string) []string {
-	return func(s string) []string {
-		return getFuncNames()
-	}
-}
+func initCommands() []cmd.Command {
+	var commands []cmd.Command
 
-func getFuncNames() []string {
-	v := reflect.TypeOf(&homehub.Hub{})
-	funcNames := make([]string, v.NumMethod())
-	for i := 0; i < v.NumMethod(); i++ {
-		funcNames[i] = v.Method(i).Name
-	}
-	return funcNames
-}
+	login := &cmd.GenericCommand{
+		Name:        "Login",
+		Description: "Creates a new Home Hub login session",
+		Exec: func(args []string) (result interface{}, err error) {
+			hub := service.GetHub()
+			if hub == nil || !service.IsLoggedIn() {
+				var hubURL string
+				var userName string
 
-func invokeMethod(l *readline.Instance, methodName string, args []string) {
-	h := reflect.TypeOf(hub)
-	m, found := h.MethodByName(methodName)
-	if found {
-		t := m.Func.Type()
-		inputs := make([]reflect.Value, t.NumIn())
+				fmt.Print("Home hub URL: ")
+				fmt.Scan(&hubURL)
 
-		if t.NumIn() > 0 {
-			argOffset := 0
-			if t.In(0).Kind().String() == "ptr" {
-				argOffset = 1
+				fmt.Print("Home hub user: ")
+				fmt.Scan(&userName)
+
+				password, _ := speakeasy.Ask(fmt.Sprint("Home Hub password: "))
+
+				service.NewHub(hubURL, userName, password)
 			}
-
-			if len(args) != t.NumIn()-argOffset {
-				fmt.Printf("Wrong number of arguments for '%s'. Expected %d but got %d.\n", methodName, t.NumIn()-1, len(args))
-				return
+			success, err := service.GetHub().Login()
+			if success {
+				service.AuthenticationComplete()
 			}
+			return success, err
+		},
+	}
 
-			for i := argOffset; i < t.NumIn(); i++ {
-				switch t.In(i).Kind().String() {
-				case "bool":
-					val, err := strconv.ParseBool(args[i-argOffset])
-					if err == nil {
-						inputs[i] = reflect.ValueOf(val)
-					} else {
-						fmt.Printf("Expected '%s' boolean function argument %d to be either true or false . But got '%s'.\n", methodName, i, args[i-argOffset])
-						return
+	enableDebug := &cmd.GenericCommand{
+		Name:        "EnableDebug",
+		Description: "Gets details about a specific device connected to the Home Hub",
+		ArgNames:    []string{"enable"},
+		ArgTypes:    []string{"bool"},
+		Exec: func(args []string) (result interface{}, err error) {
+			enable, err := strconv.ParseBool(args[0])
+			if err != nil {
+				parseErr := errors.New("Enable flag must be either true or false")
+				return nil, parseErr
+			}
+			service.GetHub().EnableDebug(enable)
+			return nil, nil
+		},
+	}
+	bandwidthMonitor := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "BandwidthMonitor",
+			Description: "Creates a new Home Hub login session",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().BandwidthMonitor() },
+		},
+		AuthenticatingCommand: login,
+	}
+
+	broadbandProductType := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "BroadbandProductType",
+			Description: "Gets the BT broadband product type",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().BroadbandProductType() },
+		},
+		AuthenticatingCommand: login,
+	}
+	connectedDevices := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "ConnectedDevices",
+			Description: "Gets details related to the devices connected to the Home Hub",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().ConnectedDevices() },
+			PostExec: func(result interface{}, err error) error {
+				if err == nil {
+					headerPattern := "%-5s%-20s%-25s%-7s\n"
+					dataPattern := "%-5d%-20s%-25s%-7s\n"
+					connectedDevices := result.([]homehub.DeviceDetail)
+
+					fmt.Print("\n")
+					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
+					fmt.Printf(headerPattern, "ID", "IP Address", "Physical Address", "Type")
+					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
+
+					for i := 0; i < len(connectedDevices); i++ {
+						if connectedDevices[i].InterfaceType == "WiFI" || connectedDevices[i].InterfaceType == "Ethernet" {
+							fmt.Printf(dataPattern,
+								connectedDevices[i].UID,
+								connectedDevices[i].IPAddress,
+								connectedDevices[i].PhysicalAddress,
+								connectedDevices[i].InterfaceType,
+							)
+						}
 					}
-					break
-				case "int":
-					val, err := strconv.Atoi(args[i-argOffset])
-					if err == nil {
-						inputs[i] = reflect.ValueOf(val)
-					} else {
-						fmt.Printf("Expected '%s' int function argument %d to be numeric. But got '%s'.\n", methodName, i, args[i-argOffset])
-						return
-					}
-					break
-				default:
-					inputs[i] = reflect.ValueOf(args[i-argOffset])
+					return nil
 				}
-			}
-		}
-
-		if hub == nil {
-			fmt.Printf("\nYou are not logged in. Please login...\n\n")
-			hub = doLogin(l)
-		}
-
-		if hub != nil {
-			inputs[0] = reflect.ValueOf(hub)
-			resp := m.Func.Call(inputs)
-
-			if t.NumOut() > 0 {
-				err := ""
-				for i := 0; i < t.NumOut(); i++ {
-					if resp[i].Type().String() == "error" && !resp[i].IsNil() {
-						err = fmt.Sprintf("%s", resp[i].Interface())
-						break
-					}
-				}
-				if len(err) > 0 {
-					if err == "Invalid user session" {
-						fmt.Println("Login session has expired")
-						hub = nil
-						invokeMethod(l, methodName, args)
-					} else {
-						fmt.Printf("Error executing command '%s': %s\n", methodName, err)
-					}
-				} else if resp[0].Type().String() != "error" {
-					fmt.Println(resp[0].String())
-				}
-			}
-		}
-	} else {
-		fmt.Println("homehub: Command not found:", strconv.Quote(methodName))
+				return err
+			},
+		},
+		AuthenticatingCommand: login,
 	}
-}
+	dataPumpVersion := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DataPumpVersion",
+			Description: "Gets details related to the DSL line firmware version",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DataPumpVersion() },
+		},
+		AuthenticatingCommand: login,
+	}
+	dataReceived := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DataReceived",
+			Description: "Gets the number of bytes receieved since the Home Hub was last rebooted",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DataReceived() },
+		},
+		AuthenticatingCommand: login,
+	}
+	dataSent := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DataSent",
+			Description: "Gets the number of bytes sent since the Home Hub was last rebooted",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DataSent() },
+		},
+		AuthenticatingCommand: login,
+	}
+	deviceInfo := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DeviceInfo",
+			Description: "Gets details about a specific device connected to the Home Hub",
+			ArgNames:    []string{"deviceId"},
+			ArgTypes:    []string{"int"},
+			Exec: func(args []string) (result interface{}, err error) {
+				id, err := strconv.Atoi(args[0])
+				if err != nil {
+					parseErr := errors.New("Device ID must be a numeric value")
+					return nil, parseErr
+				}
+				return service.GetHub().DeviceInfo(id)
+			},
+			PostExec: func(result interface{}, err error) error {
+				if err == nil {
+					headerPattern := "%-5s%-20s%-25s%-7s\n"
+					dataPattern := "%-5d%-20s%-25s%-7s\n"
+					device := result.(homehub.DeviceDetail)
 
-func stringIsEmpty(s string) bool {
-	return len(strings.TrimSpace(s)) == 0
-}
+					fmt.Print("\n")
+					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
+					fmt.Printf(headerPattern, "ID", "IP Address", "Physical Address", "Type")
+					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
 
-func doLogin(l *readline.Instance) *homehub.Hub {
-	var URL string
-	var username string
-	var password []byte
+					fmt.Printf(dataPattern,
+						device.UID,
+						device.IPAddress,
+						device.PhysicalAddress,
+						device.InterfaceType,
+					)
+					return nil
+				}
+				return err
+			}},
+		AuthenticatingCommand: login,
+	}
+	dhcpAuthoritative := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DhcpAuthoritative",
+			Description: "Gets details about whether the Home Hub is the authoritative DHCP server",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DhcpAuthoritative() },
+		},
+		AuthenticatingCommand: login,
+	}
+	dhcpPoolEnd := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DhcpPoolEnd",
+			Description: "Gets the Home Hub IPV4 DHCP pool end address",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DhcpPoolEnd() },
+		},
+		AuthenticatingCommand: login,
+	}
+	dhcpPoolStart := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DhcpPoolStart",
+			Description: "Gets the Home Hub IPV4 DHCP pool start address",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DhcpPoolStart() },
+		},
+		AuthenticatingCommand: login,
+	}
+	dhcpSubnetMask := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DhcpSubnetMask",
+			Description: "Gets the Home Hub DHCP subnet mask",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DhcpSubnetMask() },
+		},
+		AuthenticatingCommand: login,
+	}
+	downstreamSyncSpeed := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "DownstreamSyncSpeed",
+			Description: "Gets the available speed at which the Home Hub can download data",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DownstreamSyncSpeed() },
+		},
+		AuthenticatingCommand: login,
+	}
+	enableDhcpAuthoritative := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "EnableDhcpAuthoritative",
+			Description: "Toggles whether the Home Hub is the authoritative DHCP server",
+			ArgNames:    []string{"enable"},
+			ArgTypes:    []string{"bool"},
+			Exec: func(args []string) (result interface{}, err error) {
+				enable, err := strconv.ParseBool(args[0])
+				if err != nil {
+					parseErr := errors.New("Enable flag must be either true or false")
+					return nil, parseErr
+				}
+				err = service.GetHub().EnableDhcpAuthoritative(enable)
+				return nil, err
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	eventLog := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "EventLog",
+			Description: "Gets the Home Hub event log entries",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().EventLog() },
+			PostExec: func(result interface{}, err error) error {
+				if err == nil {
+					headerPattern := "%-30s%-20s%-25s%-7s\n"
+					dataPattern := "%-30s%-20s%-25s%-7s\n"
+					eventLog := result.(*homehub.EventLog)
+					eventLogEntries := eventLog.Entries
 
-	fmt.Print("Home hub URL: ")
-	fmt.Scan(&URL)
+					fmt.Print("\n")
+					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
+					fmt.Printf(headerPattern, "Time", "Type", "Category", "Message")
+					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
 
-	fmt.Print("Home hub user name: ")
-	fmt.Scan(&username)
-
-	password, _ = l.ReadPassword("Home hub password: ")
-
-	hub := homehub.New(URL, username, string(password))
-	success, _ := hub.Login()
-
-	if !success {
-		fmt.Println("Login failed")
-		return nil
+					for i := 0; i < len(eventLogEntries); i++ {
+						fmt.Printf(dataPattern,
+							eventLogEntries[i].Timestamp,
+							eventLogEntries[i].Type,
+							eventLogEntries[i].Category,
+							eventLogEntries[i].Message,
+						)
+					}
+					return nil
+				}
+				return err
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	hardwareVersion := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "HardwareVersion",
+			Description: "Gets the Home Hub hardware version",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().HardwareVersion() },
+		},
+		AuthenticatingCommand: login,
+	}
+	internetConnectionStatus := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "InternetConnectionStatus",
+			Description: "Gets the status of the Home Hub internet connection",
+			Exec: func(args []string) (result interface{}, err error) {
+				return service.GetHub().InternetConnectionStatus()
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	lightBrightness := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "LightBrightness",
+			Description: "Gets the Home Hub LED brightness percentage value",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().LightBrightness() },
+		},
+		AuthenticatingCommand: login,
+	}
+	lightBrightnessSet := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "LightBrightnessSet",
+			Description: "Sets the Home Hub LED brightness percentage value",
+			Exec: func(args []string) (result interface{}, err error) {
+				brightness, _ := strconv.Atoi(args[0])
+				err = service.GetHub().LightBrightnessSet(brightness)
+				return nil, err
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	lightEnable := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "LightEnable",
+			Description: "Toggles the Home Hub LED on or off",
+			Exec: func(args []string) (result interface{}, err error) {
+				enable, _ := strconv.ParseBool(args[0])
+				err = service.GetHub().LightEnable(enable)
+				return nil, err
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	lightStatus := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "LightStatus",
+			Description: "Gets the status of the Home Hub LED",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().LightStatus() },
+		},
+		AuthenticatingCommand: login,
+	}
+	localTime := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "LocalTime",
+			Description: "Gets local time from the Home Hub",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().LocalTime() },
+		},
+		AuthenticatingCommand: login,
+	}
+	maintenaceFirmwareVersion := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "MaintenaceFirmwareVersion",
+			Description: "Gets the Home Hub maintenance firmware version",
+			Exec: func(args []string) (result interface{}, err error) {
+				return service.GetHub().MaintenaceFirmwareVersion()
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	publicIPAddress := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "PublicIPAddress",
+			Description: "Gets the Home Hub public IP address",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().PublicIPAddress() },
+		},
+		AuthenticatingCommand: login,
+	}
+	publicSubnetMask := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "PublicSubnetMask",
+			Description: "Gets the Home Hub public IP subnet mask",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().PublicSubnetMask() },
+		},
+		AuthenticatingCommand: login,
+	}
+	reboot := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "Reboot",
+			Description: "Reboots the Home Hub",
+			Exec: func(args []string) (result interface{}, err error) {
+				return nil, service.GetHub().Reboot()
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	sambaHost := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "SambaHost",
+			Description: "Gets the Home Hub samba host name",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().SambaHost() },
+		},
+		AuthenticatingCommand: login,
+	}
+	sambaIP := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "SambaIP",
+			Description: "Gets the Home Hub samba IP address",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().SambaIP() },
+		},
+		AuthenticatingCommand: login,
+	}
+	serialNumber := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "SerialNumber",
+			Description: "Gets the Home Hub serial number",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().SerialNumber() },
+		},
+		AuthenticatingCommand: login,
+	}
+	softwareVersion := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "SoftwareVersion",
+			Description: "Gets the Home Hub software version",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().SoftwareVersion() },
+		},
+		AuthenticatingCommand: login,
+	}
+	upstreamSyncSpeed := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "UpstreamSyncSpeed",
+			Description: "Gets the Home Hub upload speed",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().UpstreamSyncSpeed() },
+		},
+		AuthenticatingCommand: login,
+	}
+	version := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "Version",
+			Description: "Gets the Home Hub version",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().Version() },
+		},
+		AuthenticatingCommand: login,
+	}
+	wifiSSID := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "WiFiSSID",
+			Description: "Gets the Home Hub WiFI SSID",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().WiFiSSID() },
+		},
+		AuthenticatingCommand: login,
+	}
+	wifiSecurityMode := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "WiFiSecurityMode",
+			Description: "Gets the Home Hub WiFI security mode",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().WiFiSecurityMode() },
+		},
+		AuthenticatingCommand: login,
 	}
 
-	fmt.Println("Logged in as", username)
-
-	return hub
-}
-
-func banner() {
-	fmt.Println(" _   _                           _   _         _")
-	fmt.Println("| | | |                         | | | |       | |")
-	fmt.Println("| |_| |  ___   _ __ ___    ___  | |_| | _   _ | |__")
-	fmt.Println("|  _  | / _ \\ | '_ ` _ \\  / _ \\ |  _  || | | || '_ \\")
-	fmt.Println("| | | || (_) || | | | | ||  __/ | | | || |_| || |_) |")
-	fmt.Println("\\_| |_/ \\___/ |_| |_| |_| \\___| \\_| |_/ \\__,_||_.__/")
-	fmt.Printf("\n=====================================================\n\n")
+	commands = append(commands,
+		login,
+		enableDebug,
+		bandwidthMonitor,
+		broadbandProductType,
+		connectedDevices,
+		dataPumpVersion,
+		dataReceived,
+		dataSent,
+		deviceInfo,
+		dhcpAuthoritative,
+		dhcpPoolEnd,
+		dhcpPoolStart,
+		dhcpSubnetMask,
+		downstreamSyncSpeed,
+		enableDhcpAuthoritative,
+		eventLog,
+		hardwareVersion,
+		internetConnectionStatus,
+		lightBrightness,
+		lightBrightnessSet,
+		lightEnable,
+		lightStatus,
+		localTime,
+		maintenaceFirmwareVersion,
+		publicIPAddress,
+		publicSubnetMask,
+		reboot,
+		sambaHost,
+		sambaIP,
+		serialNumber,
+		softwareVersion,
+		upstreamSyncSpeed,
+		version,
+		wifiSSID,
+		wifiSecurityMode)
+	return commands
 }

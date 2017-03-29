@@ -20,7 +20,7 @@ dependencies:
 
 test:
   override:
-    - cd ${PROJECT} && go test -v
+    - cd ${PROJECT} && make test
 
 deployment:
   release:
