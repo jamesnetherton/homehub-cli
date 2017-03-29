@@ -3,8 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/bgentry/speakeasy"
 	"github.com/chzyer/readline"
@@ -400,6 +402,27 @@ func initCommands() []cmd.Command {
 			Description: "Reboots the Home Hub",
 			Exec: func(args []string) (result interface{}, err error) {
 				return nil, service.GetHub().Reboot()
+			},
+			PostExec: func(result interface{}, err error) error {
+				fmt.Print("\nWaiting for Home Hub to reboot...")
+				attempts := 0
+				for {
+					attempts++
+					response, err := http.Get(service.GetHub().URL)
+					if err != nil || response.StatusCode != 200 {
+						if attempts == 24 {
+							fmt.Println("\nGave up waiting for Home Hub to become available")
+							break
+						} else {
+							fmt.Print(".")
+						}
+					} else {
+						fmt.Println()
+						break
+					}
+					time.Sleep(5000 * time.Millisecond)
+				}
+				return nil
 			},
 		},
 		AuthenticatingCommand: login,
