@@ -15,11 +15,11 @@ it's compatible with your Home Hub firmware version. Or refer to the [compatibil
 
 For *nix and OS X:
 
-    ./homehub-cli
+./homehub-cli
 
 For Windows:
 
-    homehub-cli.exe
+homehub-cli.exe
 
 You'll need to authenticate against the Home Hub in order to do anything useful. Use the `Login` command to do this. Pressing the `TAB` key shows all of the available commands.
 
@@ -27,7 +27,7 @@ You'll need to authenticate against the Home Hub in order to do anything useful.
 
 You can run indivdual commands outside of the CLI shell by specifying the desired function to execute, together with the Home Hub authentication details.
 
-    ./homehub-cli Reboot --huburl=http://192.168.1.254 --username=admin --password=bar
+./homehub-cli Reboot --huburl=http://192.168.1.254 --username=admin --password=secret
 
 The `huburl` and `username` arguments are defaulted to the standard Home Hub IP address and admin user name. So you can omit these arguments if you want to and just specify the `password`.
 
