@@ -14,7 +14,7 @@ func newBandwidthMonitorRequest(authData *authData) (req *bandwidthMonitorReques
 
 	// TODO: Enable dates to be configurable
 	now := time.Now()
-	date := fmt.Sprintf("%d%d%d", now.Year(), now.Month(), now.Day())
+	date := fmt.Sprintf("%d%02d%02d", now.Year(), now.Month(), now.Day())
 	params := &parameters{
 		StartDate: date,
 		EndDate:   date,

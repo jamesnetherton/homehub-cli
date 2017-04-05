@@ -2,6 +2,7 @@
 
 | CLI Version | Supported Firmware Version |
 |----------------|------------------|
+|v0.3.0|SG4B10002244|
 |v0.2.0|SG4B10002244|
 |v0.1.0|SG4B10002244|
 |v0.0.2|SG4B100021EC|

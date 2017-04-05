@@ -185,12 +185,50 @@ func testAPIResponse(a *apiTest) {
 }
 
 func TestBandwidthMonitor(t *testing.T) {
-	testAPIResponse(&apiTest{
-		method:          "BandwidthMonitor",
-		apiStubResponse: "bandwidth_monitor",
-		expectedResult:  "a0:b1:c2:d3:e4:f5,2016-12-31,10959,1301\na1:b9:c8:d7:e6:f5,2016-12-31,218,30\n\n",
-		t:               t,
-	})
+	server, hub := mockAPIClientServer("bandwidth_monitor")
+	defer server.Close()
+
+	res, err := hub.BandwidthMonitor()
+
+	if err != nil {
+		t.Fatalf("Error returned from BandwidthMonitor %s", err.Error())
+	}
+
+	if len(res.Entries) != 2 {
+		t.Fatalf("Expected 2 bandwidth log entries but got %d", len(res.Entries))
+	}
+
+	if res.Entries[0].MACAddress != "a0:b1:c2:d3:e4:f5" {
+		t.Fatalf("Expected bandwidth log entry 1 timestamp a0:b1:c2:d3:e4:f5 but got %s", res.Entries[0].MACAddress)
+	}
+
+	if res.Entries[0].Date != "2016-12-30" {
+		t.Fatalf("Expected bandwidth log entry 1 date 2016-12-30 but got %s", res.Entries[0].Date)
+	}
+
+	if res.Entries[0].DownloadMegabytes != 10959 {
+		t.Fatalf("Expected bandwidth log entry 1 download megabytes 10959 but got %s", res.Entries[0].DownloadMegabytes)
+	}
+
+	if res.Entries[0].UploadMegabytes != 1301 {
+		t.Fatalf("Expected bandwidth log entry 1 upload megabytes 1301 but got %s", res.Entries[0].UploadMegabytes)
+	}
+
+	if res.Entries[1].MACAddress != "a1:b9:c8:d7:e6:f5" {
+		t.Fatalf("Expected bandwidth log entry 2 timestamp a1:b9:c8:d7:e6:f5 but got %s", res.Entries[1].MACAddress)
+	}
+
+	if res.Entries[1].Date != "2016-12-31" {
+		t.Fatalf("Expected bandwidth log entry 2 date 2016-12-31 but got %s", res.Entries[1].Date)
+	}
+
+	if res.Entries[1].DownloadMegabytes != 218 {
+		t.Fatalf("Expected bandwidth log entry 2 download megabytes 218 but got %s", res.Entries[1].DownloadMegabytes)
+	}
+
+	if res.Entries[1].UploadMegabytes != 30 {
+		t.Fatalf("Expected bandwidth log entry 2 upload megabytes ,30 but got %s", res.Entries[1].UploadMegabytes)
+	}
 }
 
 func TestBroadbandProductType(t *testing.T) {

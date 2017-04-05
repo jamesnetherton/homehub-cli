@@ -20,8 +20,23 @@ func New(URL string, username string, password string) *Hub {
 }
 
 // BandwidthMonitor returns bandwidth statistics for devices that have connected to the router
-func (h *Hub) BandwidthMonitor() (result string, err error) {
-	return h.client.getBandwidthUsage()
+func (h *Hub) BandwidthMonitor() (result *BandwidthLog, err error) {
+	stats, err := h.client.getBandwidthUsage()
+
+	if err != nil {
+		return nil, err
+	}
+
+	bandwidthLog := &BandwidthLog{}
+
+	for _, line := range strings.Split(stats, "\n") {
+		logEntry := parseBandwidthLogEntry(line)
+		if logEntry != nil {
+			bandwidthLog.Entries = append(bandwidthLog.Entries, *logEntry)
+		}
+	}
+
+	return bandwidthLog, nil
 }
 
 // BroadbandProductType returns the last used wan interface type. For BT this equates to the broadband product type

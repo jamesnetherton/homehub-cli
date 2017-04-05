@@ -110,6 +110,33 @@ func initCommands() []cmd.Command {
 			Name:        "BandwidthMonitor",
 			Description: "Creates a new Home Hub login session",
 			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().BandwidthMonitor() },
+			PostExec: func(result interface{}, err error) error {
+				if err == nil {
+					headerPattern := "%-30s%-20s%-25s%-7s\n"
+					dataPattern := "%-30s%-20s%-25d%-7d\n"
+					bandwidthLog := result.(*homehub.BandwidthLog)
+					bandwidthLogEntries := bandwidthLog.Entries
+
+					fmt.Print("\n")
+					fmt.Printf(headerPattern, "------------------", "----------", "----------", "--------")
+					fmt.Printf(headerPattern, "   MAC Address    ", "   Date   ", "Downloaded", "Uploaded")
+					fmt.Printf(headerPattern, "------------------", "----------", "----------", "--------")
+
+					for i := 0; i < len(bandwidthLogEntries); i++ {
+						fmt.Printf(dataPattern,
+							bandwidthLogEntries[i].MACAddress,
+							bandwidthLogEntries[i].Date,
+							bandwidthLogEntries[i].DownloadMegabytes,
+							bandwidthLogEntries[i].UploadMegabytes,
+						)
+					}
+
+					fmt.Print("\n")
+
+					return nil
+				}
+				return err
+			},
 		},
 		AuthenticatingCommand: login,
 	}
