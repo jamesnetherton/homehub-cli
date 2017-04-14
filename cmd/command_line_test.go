@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/jamesnetherton/homehub-cli/service"
@@ -22,6 +23,10 @@ func (c *FakeCommand) GetName() string {
 
 func (c *FakeCommand) Validate(args []string) bool {
 	return true
+}
+
+func (c *FakeCommand) Usage() {
+	fmt.Printf("Usage FakeCommand foo<Bar>")
 }
 
 func TestCommandLineParseWithNoArgs(t *testing.T) {

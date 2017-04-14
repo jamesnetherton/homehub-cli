@@ -46,6 +46,8 @@ func (c *GenericCommand) ExecuteLifecylce(args []string) {
 				fmt.Println(postErr)
 			}
 		}
+	} else {
+		c.Usage()
 	}
 }
 
@@ -54,10 +56,9 @@ func (c *GenericCommand) GetName() string {
 	return c.Name
 }
 
-// Validate validates that the correct number of arguemnts were passed to the command
+// Validate validates that the correct number of arguments were passed to the command
 func (c *GenericCommand) Validate(args []string) bool {
 	if len(args) != len(c.ArgNames) {
-		fmt.Printf("Wrong number of arguments for '%s'. Expected %d but got %d.\n", c.Name, len(c.ArgNames), len(args))
 		return false
 	}
 	return true
@@ -66,4 +67,14 @@ func (c *GenericCommand) Validate(args []string) bool {
 // Execute executes the command
 func (c *GenericCommand) Execute(args []string) (result interface{}, err error) {
 	return c.Exec(args)
+}
+
+func (c *GenericCommand) Usage() {
+	fmt.Printf("Usage: %s ", c.Name)
+
+	for i := 0; i < len(c.ArgNames); i++ {
+		fmt.Printf("%s<%s> ", c.ArgNames[i], c.ArgTypes[i])
+	}
+
+	fmt.Println()
 }

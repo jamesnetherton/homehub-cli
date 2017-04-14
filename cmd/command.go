@@ -5,5 +5,6 @@ type Command interface {
 	Execute(args []string) (result interface{}, err error)
 	ExecuteLifecylce(args []string)
 	GetName() string
+	Usage()
 	Validate(args []string) bool
 }

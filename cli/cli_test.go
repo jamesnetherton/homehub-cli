@@ -75,8 +75,8 @@ func TestCommandWithoutRequiredArguments(t *testing.T) {
 
 	output, _ := cli.Output()
 
-	if !strings.Contains(string(output), "Wrong number of arguments for 'EnableDebug'. Expected 1 but got 0") {
-		t.Errorf("Expected message warning of incorrect number of arguments")
+	if !strings.Contains(string(output), "Usage: EnableDebug enable<bool>") {
+		t.Errorf("Expected usage message: EnableDebug enable<bool>")
 	}
 
 	cli.Wait()
