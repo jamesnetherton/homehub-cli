@@ -46,19 +46,19 @@ func (c *CommandLineParser) Parse() (result bool, err error) {
 			fullCommandLine = strings.Replace(fullCommandLine, match, "", -1)
 		}
 
-		hubURL, urlErr := c.getMandatoryArgument("huburl", args[0])
+		hubURL, urlErr := c.getMandatoryArgument("huburl", "http://192.168.1.254", args[0])
 		if urlErr != nil {
-			return false, errors.New("--huburl flag is missing")
+			return false, errors.New("--huburl flag is missing or empty")
 		}
 
-		userName, userNameErr := c.getMandatoryArgument("username", args[0])
+		userName, userNameErr := c.getMandatoryArgument("username", "admin", args[0])
 		if userNameErr != nil {
-			return false, errors.New("--username flag is missing")
+			return false, errors.New("--username flag is missing or empty")
 		}
 
-		password, passwordErr := c.getMandatoryArgument("password", args[0])
+		password, passwordErr := c.getMandatoryArgument("password", "", args[0])
 		if passwordErr != nil {
-			return false, errors.New("--password flag is missing")
+			return false, errors.New("--password flag is missing or empty")
 		}
 
 		if service.IsLoggedIn() == false {
@@ -81,14 +81,14 @@ func (c *CommandLineParser) Parse() (result bool, err error) {
 
 		return true, nil
 	}
-	
+
 	if commandName == "--help" {
 		return false, nil
 	}
 	return false, errors.New("Unknown command: " + commandName)
 }
 
-func (c *CommandLineParser) getMandatoryArgument(argumentName string, argLine string) (argument string, err error) {
+func (c *CommandLineParser) getMandatoryArgument(argumentName string, defaultValue string, argLine string) (argument string, err error) {
 	args := strings.Split(argLine, " ")
 
 	for i := 0; i < len(args); i++ {
@@ -97,10 +97,17 @@ func (c *CommandLineParser) getMandatoryArgument(argumentName string, argLine st
 			if len(argParts) != 2 {
 				return "", errors.New("Expected " + argumentName + " to be in the format --" + argumentName + "=value")
 			}
+			if len(strings.TrimSpace(argParts[1])) == 0 {
+				return "", errors.New("Argument " + argumentName + " is empty")
+			}
 			return argParts[1], nil
 		}
 	}
-	return "", errors.New("Did not find an argument named " + argumentName)
+	if defaultValue != "" {
+		return defaultValue, nil
+	} else {
+		return "", errors.New("Did not find an argument named " + argumentName)
+	}
 }
 
 func (c *CommandLineParser) findMatchingCommand(commandName string) Command {

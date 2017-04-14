@@ -102,6 +102,23 @@ func TestCommandLineParseWithcompleteFlags(t *testing.T) {
 	actual, _ := commandLine.Parse()
 
 	if expected != actual {
-		t.Fatalf("Expected command line parse to return false")
+		t.Fatalf("Expected command line parse to return true")
+	}
+}
+
+func TestCommandLineParseWithDefaultFlags(t *testing.T) {
+	command := &FakeCommand{}
+	commands := []Command{command}
+
+	args := []string{"TestCommand", "--password=cheese"}
+	commandLine := NewCommandLineParser(commands, args)
+
+	service.AuthenticationComplete()
+
+	expected := true
+	actual, _ := commandLine.Parse()
+
+	if expected != actual {
+		t.Fatalf("Expected command line parse to return true")
 	}
 }

@@ -25,7 +25,7 @@ For Windows:
 homehub-cli.exe
 ```
 
-You'll need to authenticate against the Home Hub in order to do anything useful. Use the `Login` command to do this. Pressing the `TAB` key shows all of the available commands.
+Pressing the `TAB` key shows all of the available commands. You can get help for specific commands by doing: `CommandName --help`.
 
 #### Running indivdual commands
 
