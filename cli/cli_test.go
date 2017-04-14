@@ -7,9 +7,9 @@ import (
 	"testing"
 )
 
-func TestCLIWithInvalidCommand(t *testing.T) {
+const path = "../build/homehub-cli"
 
-	path := "../build/homehub-cli"
+func TestCLIWithInvalidCommand(t *testing.T) {
 
 	_, err := os.Stat(path)
 	if err != nil {
@@ -34,8 +34,6 @@ func TestCLIWithInvalidCommand(t *testing.T) {
 
 func TestLoginPrompt(t *testing.T) {
 
-	path := "../build/homehub-cli"
-
 	_, err := os.Stat(path)
 	if err != nil {
 		_, err := os.Stat(path + ".exe")
@@ -59,8 +57,6 @@ func TestLoginPrompt(t *testing.T) {
 
 func TestCommandWithoutRequiredArguments(t *testing.T) {
 
-	path := "../build/homehub-cli"
-
 	_, err := os.Stat(path)
 	if err != nil {
 		_, err := os.Stat(path + ".exe")
@@ -74,9 +70,52 @@ func TestCommandWithoutRequiredArguments(t *testing.T) {
 	cli.Stdin = strings.NewReader(command)
 
 	output, _ := cli.Output()
-
 	if !strings.Contains(string(output), "Usage: EnableDebug enable<bool>") {
 		t.Errorf("Expected usage message: EnableDebug enable<bool>")
+	}
+
+	cli.Wait()
+}
+
+func TestCommandHelpMessage(t *testing.T) {
+
+	_, err := os.Stat(path)
+	if err != nil {
+		_, err := os.Stat(path + ".exe")
+		if err != nil {
+			t.Fatal("homehub-cli executable not present. Run 'make build'")
+		}
+	}
+
+	cli := exec.Command(path)
+	command := "EnableDebug --help\n"
+	cli.Stdin = strings.NewReader(command)
+
+	output, _ := cli.Output()
+	if !strings.Contains(string(output), "EnableDebug: Enables debug logging of HTTP requests") {
+		t.Errorf("Expected function help message")
+	}
+
+	cli.Wait()
+}
+
+func TestCommandHelpMessageAuthenticatedCommand(t *testing.T) {
+
+	_, err := os.Stat(path)
+	if err != nil {
+		_, err := os.Stat(path + ".exe")
+		if err != nil {
+			t.Fatal("homehub-cli executable not present. Run 'make build'")
+		}
+	}
+
+	cli := exec.Command(path)
+	command := "BandwidthMonitor --help\n"
+	cli.Stdin = strings.NewReader(command)
+
+	output, _ := cli.Output()
+	if !strings.Contains(string(output), "BandwidthMonitor: Displays bandwidth statistics for devices that have connected to the Home Hub") {
+		t.Errorf("Expected function help message")
 	}
 
 	cli.Wait()

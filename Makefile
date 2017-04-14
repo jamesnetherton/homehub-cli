@@ -6,7 +6,7 @@ build:
 	rm -rf build
 	go build -o build/$(NAME) $(NAME).go
 
-test:
+test: build
 	go test -v github.com/jamesnetherton/homehub-cli/cmd \
 	           github.com/jamesnetherton/homehub-cli/cli
 

@@ -92,7 +92,7 @@ func initCommands() []cmd.Command {
 
 	enableDebug := &cmd.GenericCommand{
 		Name:        "EnableDebug",
-		Description: "Gets details about a specific device connected to the Home Hub",
+		Description: "Enables debug logging of HTTP requests",
 		ArgNames:    []string{"enable"},
 		ArgTypes:    []string{"bool"},
 		Exec: func(args []string) (result interface{}, err error) {
@@ -108,7 +108,7 @@ func initCommands() []cmd.Command {
 	bandwidthMonitor := &cmd.AuthenticationRequiringCommand{
 		GenericCommand: cmd.GenericCommand{
 			Name:        "BandwidthMonitor",
-			Description: "Creates a new Home Hub login session",
+			Description: "Displays bandwidth statistics for devices that have connected to the Home Hub",
 			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().BandwidthMonitor() },
 			PostExec: func(result interface{}, err error) error {
 				if err == nil {

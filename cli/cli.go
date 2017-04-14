@@ -51,10 +51,10 @@ func (c *CLI) Run() {
 		if !service.StringIsEmpty(line) {
 			commandLine := strings.Split(line, " ")
 			commandName := commandLine[0]
-			args := append(commandLine[:0], commandLine[1:]...)
 
 			command := c.findCommand(commandName)
 			if command != nil {
+				args := append(commandLine[:0], commandLine[1:]...)
 				command.ExecuteLifecylce(args)
 			} else {
 				fmt.Println("homehub: Command not found:", strconv.Quote(commandName))

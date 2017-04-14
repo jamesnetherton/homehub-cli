@@ -18,6 +18,11 @@ type GenericCommand struct {
 // ExecuteLifecylce runs the command execution lifecycle
 func (c *GenericCommand) ExecuteLifecylce(args []string) {
 
+	if helpRequested(args) {
+		c.Explain()
+		return
+	}
+
 	if c.Validate(args) {
 		if c.PreExec == nil {
 			c.PreExec = func(args []string) error {
@@ -77,4 +82,13 @@ func (c *GenericCommand) Usage() {
 	}
 
 	fmt.Println()
+}
+
+func (c *GenericCommand) Explain() {
+	fmt.Printf("%s: %s\n\n", c.Name, c.Description)
+	c.Usage()
+}
+
+func helpRequested(args []string) bool {
+	return (len(args) > 0) && (args[0] == "-help" || args[0] == "--help" || args[0] == "-h")
 }
