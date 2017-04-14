@@ -38,11 +38,7 @@ func (c *CLI) Run() {
 	for {
 		line, err := c.readline.Readline()
 		if err == readline.ErrInterrupt {
-			if len(line) == 0 {
-				break
-			} else {
-				continue
-			}
+			continue
 		} else if err == io.EOF {
 			break
 		}
