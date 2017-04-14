@@ -15,8 +15,6 @@ machine:
 dependencies:
   cache_directories:
     - ~/download
-  override:
-    - cd ${PROJECT} && make build
 
 test:
   override:
