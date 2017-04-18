@@ -1,4 +1,4 @@
-# BT Home Hub CLI
+# Home Hub CLI
 
 A CLI that can interact with BT Home Hub routers.
 
