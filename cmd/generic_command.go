@@ -78,7 +78,7 @@ func (c *GenericCommand) Usage() {
 	fmt.Printf("Usage: %s ", c.Name)
 
 	for i := 0; i < len(c.ArgNames); i++ {
-		fmt.Printf("%s<%s> ", c.ArgNames[i], c.ArgTypes[i])
+		fmt.Printf("%s <%s> ", c.ArgNames[i], c.ArgTypes[i])
 	}
 
 	fmt.Println()

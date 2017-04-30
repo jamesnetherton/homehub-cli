@@ -46,3 +46,16 @@ func newXPathRequest(authData *authData, xpath string, method string, value inte
 		},
 	}
 }
+
+func newMultiXPathRequest(authData *authData, actions []action) (req *xpathRequest) {
+	authData.requestCount++
+
+	requestBody := newRequestBody(authData, actions)
+
+	return &xpathRequest{
+		genericRequest: genericRequest{
+			*requestBody,
+			*authData,
+		},
+	}
+}

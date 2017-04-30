@@ -1,6 +1,7 @@
 package homehub
 
 import (
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -57,7 +58,18 @@ func (h *Hub) BroadbandProductType() (result string, err error) {
 
 // ConnectedDevices returns information about any devices connected to the router
 func (h *Hub) ConnectedDevices() (result []DeviceDetail, err error) {
-	return h.client.getXPathValues(mainCacheableHosts)
+	var d []DeviceDetail
+	devices, err := h.client.getXPathValues(mainCacheableHosts, reflect.TypeOf(d))
+
+	if err == nil {
+		var deviceDetails []DeviceDetail
+		for _, deviceDetail := range devices {
+			deviceDetails = append(deviceDetails, deviceDetail.(DeviceDetail))
+		}
+		return deviceDetails, nil
+	}
+
+	return nil, err
 }
 
 // DataPumpVersion returns the DSL line firmware version
@@ -76,9 +88,15 @@ func (h *Hub) DataSent() (result int64, err error) {
 }
 
 // DeviceInfo returns infomation about a device matching the specified id
-func (h *Hub) DeviceInfo(id int) (result DeviceDetail, err error) {
-	host, err := h.client.getXPathHostValue(strings.Replace(ethernetDeviceDevicesList, "#", strconv.Itoa(id), 1))
-	return host.DeviceDetail, err
+func (h *Hub) DeviceInfo(id int) (result *DeviceDetail, err error) {
+	var hostType host
+	valueType, err := h.client.getXPathValueType(strings.Replace(ethernetDeviceDevicesList, "#", strconv.Itoa(id), 1), reflect.TypeOf(hostType))
+
+	if err == nil {
+		return &valueType.(*host).DeviceDetail, err
+	}
+
+	return nil, err
 }
 
 // DhcpAuthoritative returns whether the hub is the authoritive DHCP server
@@ -198,6 +216,56 @@ func (h *Hub) MaintenaceFirmwareVersion() (result string, err error) {
 	return h.client.getXPathValueString(technicalLogFirmwareVersion)
 }
 
+// NatRules returns IPV4 firewall NAT rules
+func (h *Hub) NatRules() (result []NatRule, err error) {
+	var r []NatRule
+	natRules, err := h.client.getXPathValues(accessControlPortForwardingPortmappings, reflect.TypeOf(r))
+
+	if err == nil {
+		var rules []NatRule
+		for _, rule := range natRules {
+			rules = append(rules, rule.(NatRule))
+		}
+		return rules, nil
+	}
+
+	return nil, err
+}
+
+// NatRule returns an IPV4 firewall NAT rule matching the specified id
+func (h *Hub) NatRule(id int) (result *NatRule, err error) {
+	var portMappingType portMapping
+	valueType, err := h.client.getXPathValueType(strings.Replace(accessControlPortForwardingUID, "#", strconv.Itoa(id), 1), reflect.TypeOf(portMappingType))
+
+	if err == nil {
+		return &valueType.(*portMapping).NatRule, err
+	}
+
+	return nil, err
+}
+
+// NatRuleCreate creates an IPV4 firewall NAT rule
+func (h *Hub) NatRuleCreate(natRule *NatRule) (err error) {
+	uid, err := h.client.addChildXPathValue(accessControlPortForwardingPortmappings, &portMapping{NatRule: *natRule})
+
+	if err == nil {
+		natRule.UID = uid
+		return nil
+	}
+
+	return err
+}
+
+// NatRuleDelete deletes an IPV4 firewall NAT rule
+func (h *Hub) NatRuleDelete(id int) (err error) {
+	return h.client.deleteChildXPathValue(strings.Replace(accessControlPortForwardingUID, "#", strconv.Itoa(id), 1))
+}
+
+// NatRuleUpdate updates an existing IPV4 firewall NAT rule
+func (h *Hub) NatRuleUpdate(natRule NatRule) (err error) {
+	return h.client.setXPathValues(natRule.getUpdateActions())
+}
+
 // PublicIPAddress returns the router public IP address
 func (h *Hub) PublicIPAddress() (result string, err error) {
 	return h.client.getXPathValueString(mySagemcomBoxDeviceInfoPublicIpv4)
@@ -210,7 +278,6 @@ func (h *Hub) PublicSubnetMask() (result string, err error) {
 
 // Reboot restarts router serial number
 func (h *Hub) Reboot() (err error) {
-	// TODO: Figure out why the response is HTTP 500 and why there is a delay till the router reboots
 	return h.client.doReboot()
 }
 

@@ -409,6 +409,121 @@ func initCommands() []cmd.Command {
 		},
 		AuthenticatingCommand: login,
 	}
+	natRules := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "NatRules",
+			Description: "Gets any IPV4 NAT rules configured on the Home Hub",
+			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().NatRules() },
+			PostExec: func(result interface{}, err error) error {
+				if err == nil {
+					headerPattern := "%-5s%-25s%-15s%-25s%-25s%-25s%-25s%-10s\n"
+					dataPattern := "%-5d%-25s%-15t%-25d%-25d%-25d%-25d%-10s\n"
+					natRules := result.([]homehub.NatRule)
+
+					fmt.Print("\n")
+					fmt.Printf(headerPattern, "--", "---------------------", "-------", "-------------------", "-----------------", "-------------------", "-----------------", "--------")
+					fmt.Printf(headerPattern, "ID", "Description", "Enabled", "External Port Start", "External Port End", "Internal Port Start", "Internal Port End", "Protocol")
+					fmt.Printf(headerPattern, "--", "---------------------", "-------", "-------------------", "-----------------", "-------------------", "-----------------", "--------")
+
+					for i := 0; i < len(natRules); i++ {
+						fmt.Printf(dataPattern,
+							natRules[i].UID,
+							natRules[i].Description,
+							natRules[i].Enable,
+							natRules[i].ExternalPort,
+							natRules[i].ExternalPortEndRange,
+							natRules[i].InternalPort,
+							natRules[i].ExternalPortEndRange,
+							natRules[i].Protocol,
+						)
+					}
+					return nil
+				}
+				return err
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	natRule := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "NatRule",
+			Description: "Gets an IPV4 NAT rule configured for the specified ID",
+			ArgNames:    []string{"id"},
+			ArgTypes:    []string{"int"},
+			Exec: func(args []string) (result interface{}, err error) {
+				id, err := strconv.Atoi(args[0])
+				if err != nil {
+					parseErr := errors.New("ID must be a numeric value")
+					return nil, parseErr
+				}
+				return service.GetHub().NatRule(id)
+			},
+			PostExec: func(result interface{}, err error) error {
+				if err == nil {
+					dataPattern := "%-25s%-5d\n%-25s%-25s\n%-25s%-25s\n%-25s%-25s\n%-25s%-15t\n%-25s%-25s\n%-25s%-25d\n%-25s%-25d\n%-25s%-25s\n%-25s%-25d\n%-25s%-25d\n%-25s%-25s\n%-25s%-10s\n"
+					natRule := result.(*homehub.NatRule)
+
+					fmt.Print("\n")
+					fmt.Printf(dataPattern,
+						"ID",
+						natRule.UID,
+						"Description",
+						natRule.Description,
+						"Alias",
+						natRule.Alias,
+						"Creator",
+						natRule.Creator,
+						"Enabled",
+						natRule.Enable,
+						"Service",
+						natRule.Service,
+						"External Port Start",
+						natRule.ExternalPort,
+						"External Port End",
+						natRule.ExternalPortEndRange,
+						"External IP",
+						natRule.RemoteHost,
+						"Internal Port Start",
+						natRule.InternalPort,
+						"Internal Port End",
+						natRule.ExternalPortEndRange,
+						"Internal IP",
+						natRule.InternalClient,
+						"Protocol",
+						natRule.Protocol,
+					)
+					return nil
+				}
+				return err
+			},
+		},
+		AuthenticatingCommand: login,
+	}
+	natRuleDelete := &cmd.AuthenticationRequiringCommand{
+		GenericCommand: cmd.GenericCommand{
+			Name:        "NatRuleDelete",
+			Description: "Deletes an IPV4 NAT rule configured for the specified ID",
+			ArgNames:    []string{"id"},
+			ArgTypes:    []string{"int"},
+			Exec: func(args []string) (result interface{}, err error) {
+				id, err := strconv.Atoi(args[0])
+				if err != nil {
+					parseErr := errors.New("ID must be a numeric value")
+					return nil, parseErr
+				}
+				deleteErr := service.GetHub().NatRuleDelete(id)
+				return nil, deleteErr
+			},
+			PostExec: func(result interface{}, err error) error {
+				if err == nil {
+					fmt.Printf("NAT rule successfully deleted\n")
+					return nil
+				}
+				return err
+			},
+		},
+		AuthenticatingCommand: login,
+	}
 	publicIPAddress := &cmd.AuthenticationRequiringCommand{
 		GenericCommand: cmd.GenericCommand{
 			Name:        "PublicIPAddress",
@@ -546,6 +661,9 @@ func initCommands() []cmd.Command {
 		lightStatus,
 		localTime,
 		maintenaceFirmwareVersion,
+		natRules,
+		natRule,
+		natRuleDelete,
 		publicIPAddress,
 		publicSubnetMask,
 		reboot,

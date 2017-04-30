@@ -1,0 +1,35 @@
+{
+  "reply": {
+    "actions": [
+      {
+        "callbacks": [
+          {
+            "parameters": {
+              "errors": [],
+              "uid": 14
+            },
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "uid": 1,
+            "xpath": "Device/NAT/PortMappings/PortMapping[@uid='14']"
+          }
+        ],
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
+      }
+    ],
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
+  }
+}

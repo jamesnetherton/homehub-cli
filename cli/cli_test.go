@@ -70,8 +70,8 @@ func TestCommandWithoutRequiredArguments(t *testing.T) {
 	cli.Stdin = strings.NewReader(command)
 
 	output, _ := cli.Output()
-	if !strings.Contains(string(output), "Usage: EnableDebug enable<bool>") {
-		t.Errorf("Expected usage message: EnableDebug enable<bool>")
+	if !strings.Contains(string(output), "Usage: EnableDebug enable <bool>") {
+		t.Errorf("Expected usage message: EnableDebug enable <bool>")
 	}
 
 	cli.Wait()

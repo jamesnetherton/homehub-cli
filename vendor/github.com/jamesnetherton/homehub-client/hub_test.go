@@ -509,6 +509,236 @@ func TestMaintenanceFirmwareVersion(t *testing.T) {
 	})
 }
 
+func TestNatRules(t *testing.T) {
+	server, hub := mockAPIClientServer("nat_rules")
+	defer server.Close()
+
+	res, err := hub.NatRules()
+
+	if err != nil {
+		t.Fatalf("Error returned from NatRules %s", err.Error())
+	}
+
+	if len(res) != 1 {
+		t.Fatalf("Expected 1 NAT rule but got %d", len(res))
+	}
+
+	if res[0].Alias != "awesome-nat-rule-alias" {
+		t.Fatalf("Expected NAT rule alias awesome-nat-rule-alias but got %s", res[0].Alias)
+	}
+
+	if res[0].AllExternalInterfaces != false {
+		t.Fatalf("Expected NAT rule AllExternalInterfaces false but got %s", res[0].AllExternalInterfaces)
+	}
+
+	if res[0].Creator != "HUB_TESTER" {
+		t.Fatalf("Expected NAT rule creator HUB_TESTER but got %s", res[0].Creator)
+	}
+
+	if res[0].Description != "Test NAT Rule description" {
+		t.Fatalf("Expected NAT rule description Test NAT Rule description but got %s", res[0].Description)
+	}
+
+	if res[0].Enable != true {
+		t.Fatalf("Expected NAT rule enable true but got %s", res[0].Enable)
+	}
+
+	if res[0].ExternalPort != 1111 {
+		t.Fatalf("Expected NAT rule external port 1111 but got %d", res[0].ExternalPort)
+	}
+
+	if res[0].ExternalPortEndRange != 0 {
+		t.Fatalf("Expected NAT rule external port end range 0 but got %d", res[0].ExternalPortEndRange)
+	}
+
+	if res[0].InternalClient != "192.168.1.68" {
+		t.Fatalf("Expected NAT rule client IP 192.168.1.68 but got %s", res[0].InternalClient)
+	}
+
+	if res[0].InternalPort != 2222 {
+		t.Fatalf("Expected NAT rule internal port 2222 but got %d", res[0].InternalPort)
+	}
+
+	if res[0].LeaseDuration != 60 {
+		t.Fatalf("Expected NAT rule lease duration 60 but got %d", res[0].LeaseDuration)
+	}
+
+	if res[0].LeaseStart != "2016-08-30T19:48:55+0100" {
+		t.Fatalf("Expected NAT rule lease start 2016-08-30T19:48:55+0100 but got %s", res[0].LeaseStart)
+	}
+
+	if res[0].Protocol != "TCP" {
+		t.Fatalf("Expected NAT rule protocol TCP but got %s", res[0].Protocol)
+	}
+
+	if res[0].RemoteHost != "192.168.1.68" {
+		t.Fatalf("Expected NAT rule remote host ip 192.168.1.68 but got %s", res[0].RemoteHost)
+	}
+
+	if res[0].Service != "TEST_SERVICE" {
+		t.Fatalf("Expected NAT rule servie TEST_SERVICE but got %s", res[0].Service)
+	}
+
+	if res[0].Target != "ACCEPT" {
+		t.Fatalf("Expected NAT rule target ACCEPT but got %s", res[0].Target)
+	}
+
+	if res[0].UID != 1 {
+		t.Fatalf("Expected NAT rule type UID 1 but got %d", res[0].UID)
+	}
+}
+
+func TestNatRule(t *testing.T) {
+	server, hub := mockAPIClientServer("nat_rule")
+	defer server.Close()
+
+	natRule, err := hub.NatRule(1)
+
+	if err != nil {
+		t.Fatalf("Error returned from NatRule %s", err.Error())
+	}
+
+	if natRule.Alias != "awesome-nat-rule-alias" {
+		t.Fatalf("Expected NAT rule alias awesome-nat-rule-alias but got %s", natRule.Alias)
+	}
+
+	if natRule.AllExternalInterfaces != false {
+		t.Fatalf("Expected NAT rule AllExternalInterfaces false but got %s", natRule.AllExternalInterfaces)
+	}
+
+	if natRule.Creator != "HUB_TESTER" {
+		t.Fatalf("Expected NAT rule creator HUB_TESTER but got %s", natRule.Creator)
+	}
+
+	if natRule.Description != "Test NAT Rule description" {
+		t.Fatalf("Expected NAT rule description Test NAT Rule description but got %s", natRule.Description)
+	}
+
+	if natRule.Enable != true {
+		t.Fatalf("Expected NAT rule enable true but got %s", natRule.Enable)
+	}
+
+	if natRule.ExternalPort != 1111 {
+		t.Fatalf("Expected NAT rule external port 1111 but got %d", natRule.ExternalPort)
+	}
+
+	if natRule.ExternalPortEndRange != 0 {
+		t.Fatalf("Expected NAT rule external port end range 0 but got %d", natRule.ExternalPortEndRange)
+	}
+
+	if natRule.InternalClient != "192.168.1.68" {
+		t.Fatalf("Expected NAT rule client IP 192.168.1.68 but got %s", natRule.InternalClient)
+	}
+
+	if natRule.InternalPort != 2222 {
+		t.Fatalf("Expected NAT rule internal port 2222 but got %d", natRule.InternalPort)
+	}
+
+	if natRule.LeaseDuration != 60 {
+		t.Fatalf("Expected NAT rule lease duration 60 but got %d", natRule.LeaseDuration)
+	}
+
+	if natRule.LeaseStart != "2016-08-30T19:48:55+0100" {
+		t.Fatalf("Expected NAT rule lease start 2016-08-30T19:48:55+0100 but got %s", natRule.LeaseStart)
+	}
+
+	if natRule.Protocol != "TCP" {
+		t.Fatalf("Expected NAT rule protocol TCP but got %s", natRule.Protocol)
+	}
+
+	if natRule.RemoteHost != "192.168.1.68" {
+		t.Fatalf("Expected NAT rule remote host ip 192.168.1.68 but got %s", natRule.RemoteHost)
+	}
+
+	if natRule.Service != "TEST_SERVICE" {
+		t.Fatalf("Expected NAT rule servie TEST_SERVICE but got %s", natRule.Service)
+	}
+
+	if natRule.Target != "ACCEPT" {
+		t.Fatalf("Expected NAT rule target ACCEPT but got %s", natRule.Target)
+	}
+
+	if natRule.UID != 1 {
+		t.Fatalf("Expected NAT rule type UID 1 but got %d", natRule.UID)
+	}
+}
+
+func TestNatRuleCreate(t *testing.T) {
+	server, hub := mockAPIClientServer("nat_rule_create")
+	defer server.Close()
+
+	natRule := &NatRule{
+		Enable:                false,
+		Alias:                 "",
+		ExternalInterface:     "",
+		AllExternalInterfaces: false,
+		LeaseDuration:         0,
+		RemoteHost:            "",
+		ExternalPort:          1111,
+		ExternalPortEndRange:  1111,
+		InternalInterface:     "",
+		InternalPort:          0,
+		Protocol:              "TCP",
+		Service:               "Test Service",
+		InternalClient:        "",
+		Description:           "Test Description",
+		Creator:               "JAMES",
+		Target:                "REJECT",
+		LeaseStart:            "",
+	}
+
+	err := hub.NatRuleCreate(natRule)
+
+	if err != nil {
+		t.Fatalf("Error returned from NatRuleCreate %s", err.Error())
+	}
+
+	if natRule.UID != 14 {
+		t.Fatalf("Expected NAT rule UID 13 but was %d", natRule.UID)
+	}
+}
+
+func TestNatRuleDelete(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "NatRuleDelete",
+		methodArgs:      []interface{}{16},
+		apiStubResponse: "nat_rule_delete",
+		expectedResult:  nil,
+		t:               t,
+	})
+}
+
+func TestNatRuleUpdate(t *testing.T) {
+	natRule := NatRule{
+		UID:                   18,
+		Enable:                true,
+		Alias:                 "Updated Alias",
+		ExternalInterface:     "",
+		AllExternalInterfaces: false,
+		LeaseDuration:         30,
+		RemoteHost:            "",
+		ExternalPort:          2222,
+		ExternalPortEndRange:  2222,
+		InternalInterface:     "",
+		InternalPort:          0,
+		Protocol:              "UDP",
+		Service:               "FTP",
+		InternalClient:        "",
+		Description:           "Updated Test Description",
+		Creator:               "HIDDEN",
+		Target:                "DROP",
+		LeaseStart:            "",
+	}
+
+	testAPIResponse(&apiTest{
+		method:          "NatRuleUpdate",
+		methodArgs:      []interface{}{natRule},
+		apiStubResponse: "nat_rule_update",
+		expectedResult:  nil,
+		t:               t,
+	})
+}
+
 func TestPublicIPAddress(t *testing.T) {
 	testAPIResponse(&apiTest{
 		method:          "PublicIPAddress",
