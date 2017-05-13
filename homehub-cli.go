@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/bgentry/speakeasy"
@@ -66,7 +65,7 @@ func initCommands() []cmd.Command {
 	login := &cmd.GenericCommand{
 		Name:        "Login",
 		Description: "Creates a new Home Hub login session",
-		Exec: func(args []string) (result interface{}, err error) {
+		Exec: func(context *cmd.CommandContext) {
 			hub := service.GetHub()
 			if hub == nil || !service.IsLoggedIn() {
 				var hubURL string
@@ -86,7 +85,8 @@ func initCommands() []cmd.Command {
 			if success {
 				service.AuthenticationComplete()
 			}
-			return success, err
+
+			context.SetResult(success, err)
 		},
 	}
 
@@ -95,26 +95,25 @@ func initCommands() []cmd.Command {
 		Description: "Enables debug logging of HTTP requests",
 		ArgNames:    []string{"enable"},
 		ArgTypes:    []string{"bool"},
-		Exec: func(args []string) (result interface{}, err error) {
-			enable, err := strconv.ParseBool(args[0])
+		Exec: func(context *cmd.CommandContext) {
+			enable, err := context.GetBooleanArg(0)
 			if err != nil {
 				parseErr := errors.New("Enable flag must be either true or false")
-				return nil, parseErr
+				context.SetResult(nil, parseErr)
 			}
 			service.GetHub().EnableDebug(enable)
-			return nil, nil
 		},
 	}
 	bandwidthMonitor := &cmd.AuthenticationRequiringCommand{
 		GenericCommand: cmd.GenericCommand{
 			Name:        "BandwidthMonitor",
 			Description: "Displays bandwidth statistics for devices that have connected to the Home Hub",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().BandwidthMonitor() },
-			PostExec: func(result interface{}, err error) error {
-				if err == nil {
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().BandwidthMonitor()) },
+			PostExec: func(context *cmd.CommandContext) {
+				if !context.IsError() {
 					headerPattern := "%-30s%-20s%-25s%-7s\n"
 					dataPattern := "%-30s%-20s%-25d%-7d\n"
-					bandwidthLog := result.(*homehub.BandwidthLog)
+					bandwidthLog := context.GetResult().(*homehub.BandwidthLog)
 					bandwidthLogEntries := bandwidthLog.Entries
 
 					fmt.Print("\n")
@@ -132,10 +131,7 @@ func initCommands() []cmd.Command {
 					}
 
 					fmt.Print("\n")
-
-					return nil
 				}
-				return err
 			},
 		},
 		AuthenticatingCommand: login,
@@ -145,7 +141,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "BroadbandProductType",
 			Description: "Gets the BT broadband product type",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().BroadbandProductType() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().BroadbandProductType()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -153,12 +149,12 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "ConnectedDevices",
 			Description: "Gets details related to the devices connected to the Home Hub",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().ConnectedDevices() },
-			PostExec: func(result interface{}, err error) error {
-				if err == nil {
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().ConnectedDevices()) },
+			PostExec: func(context *cmd.CommandContext) {
+				if !context.IsError() {
 					headerPattern := "%-5s%-20s%-25s%-7s\n"
 					dataPattern := "%-5d%-20s%-25s%-7s\n"
-					connectedDevices := result.([]homehub.DeviceDetail)
+					connectedDevices := context.GetResult().([]homehub.DeviceDetail)
 
 					fmt.Print("\n")
 					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
@@ -175,9 +171,7 @@ func initCommands() []cmd.Command {
 							)
 						}
 					}
-					return nil
 				}
-				return err
 			},
 		},
 		AuthenticatingCommand: login,
@@ -186,7 +180,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "DataPumpVersion",
 			Description: "Gets details related to the DSL line firmware version",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DataPumpVersion() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().DataPumpVersion()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -194,7 +188,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "DataReceived",
 			Description: "Gets the number of bytes receieved since the Home Hub was last rebooted",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DataReceived() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().DataReceived()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -202,7 +196,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "DataSent",
 			Description: "Gets the number of bytes sent since the Home Hub was last rebooted",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DataSent() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().DataSent()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -212,19 +206,19 @@ func initCommands() []cmd.Command {
 			Description: "Gets details about a specific device connected to the Home Hub",
 			ArgNames:    []string{"deviceId"},
 			ArgTypes:    []string{"int"},
-			Exec: func(args []string) (result interface{}, err error) {
-				id, err := strconv.Atoi(args[0])
+			Exec: func(context *cmd.CommandContext) {
+				id, err := context.GetIntArg(0)
 				if err != nil {
 					parseErr := errors.New("Device ID must be a numeric value")
-					return nil, parseErr
+					context.SetResult(nil, parseErr)
 				}
-				return service.GetHub().DeviceInfo(id)
+				context.SetResult(service.GetHub().DeviceInfo(id))
 			},
-			PostExec: func(result interface{}, err error) error {
-				if err == nil {
+			PostExec: func(context *cmd.CommandContext) {
+				if !context.IsError() {
 					headerPattern := "%-5s%-20s%-25s%-7s\n"
 					dataPattern := "%-5d%-20s%-25s%-7s\n"
-					device := result.(homehub.DeviceDetail)
+					device := context.GetResult().(homehub.DeviceDetail)
 
 					fmt.Print("\n")
 					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
@@ -237,9 +231,7 @@ func initCommands() []cmd.Command {
 						device.PhysicalAddress,
 						device.InterfaceType,
 					)
-					return nil
 				}
-				return err
 			}},
 		AuthenticatingCommand: login,
 	}
@@ -247,7 +239,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "DhcpAuthoritative",
 			Description: "Gets details about whether the Home Hub is the authoritative DHCP server",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DhcpAuthoritative() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().DhcpAuthoritative()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -255,7 +247,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "DhcpPoolEnd",
 			Description: "Gets the Home Hub IPV4 DHCP pool end address",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DhcpPoolEnd() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().DhcpPoolEnd()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -263,7 +255,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "DhcpPoolStart",
 			Description: "Gets the Home Hub IPV4 DHCP pool start address",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DhcpPoolStart() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().DhcpPoolStart()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -271,7 +263,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "DhcpSubnetMask",
 			Description: "Gets the Home Hub DHCP subnet mask",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DhcpSubnetMask() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().DhcpSubnetMask()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -279,7 +271,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "DownstreamSyncSpeed",
 			Description: "Gets the available speed at which the Home Hub can download data",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().DownstreamSyncSpeed() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().DownstreamSyncSpeed()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -289,14 +281,13 @@ func initCommands() []cmd.Command {
 			Description: "Toggles whether the Home Hub is the authoritative DHCP server",
 			ArgNames:    []string{"enable"},
 			ArgTypes:    []string{"bool"},
-			Exec: func(args []string) (result interface{}, err error) {
-				enable, err := strconv.ParseBool(args[0])
+			Exec: func(context *cmd.CommandContext) {
+				enable, err := context.GetBooleanArg(0)
 				if err != nil {
 					parseErr := errors.New("Enable flag must be either true or false")
-					return nil, parseErr
+					context.SetResult(nil, parseErr)
 				}
-				err = service.GetHub().EnableDhcpAuthoritative(enable)
-				return nil, err
+				context.SetResult(nil, service.GetHub().EnableDhcpAuthoritative(enable))
 			},
 		},
 		AuthenticatingCommand: login,
@@ -305,12 +296,12 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "EventLog",
 			Description: "Gets the Home Hub event log entries",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().EventLog() },
-			PostExec: func(result interface{}, err error) error {
-				if err == nil {
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().EventLog()) },
+			PostExec: func(context *cmd.CommandContext) {
+				if !context.IsError() {
 					headerPattern := "%-30s%-20s%-25s%-7s\n"
 					dataPattern := "%-30s%-20s%-25s%-7s\n"
-					eventLog := result.(*homehub.EventLog)
+					eventLog := context.GetResult().(*homehub.EventLog)
 					eventLogEntries := eventLog.Entries
 
 					fmt.Print("\n")
@@ -326,9 +317,7 @@ func initCommands() []cmd.Command {
 							eventLogEntries[i].Message,
 						)
 					}
-					return nil
 				}
-				return err
 			},
 		},
 		AuthenticatingCommand: login,
@@ -337,7 +326,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "HardwareVersion",
 			Description: "Gets the Home Hub hardware version",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().HardwareVersion() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().HardwareVersion()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -345,8 +334,8 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "InternetConnectionStatus",
 			Description: "Gets the status of the Home Hub internet connection",
-			Exec: func(args []string) (result interface{}, err error) {
-				return service.GetHub().InternetConnectionStatus()
+			Exec: func(context *cmd.CommandContext) {
+				context.SetResult(service.GetHub().InternetConnectionStatus())
 			},
 		},
 		AuthenticatingCommand: login,
@@ -355,7 +344,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "LightBrightness",
 			Description: "Gets the Home Hub LED brightness percentage value",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().LightBrightness() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().LightBrightness()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -363,10 +352,9 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "LightBrightnessSet",
 			Description: "Sets the Home Hub LED brightness percentage value",
-			Exec: func(args []string) (result interface{}, err error) {
-				brightness, _ := strconv.Atoi(args[0])
-				err = service.GetHub().LightBrightnessSet(brightness)
-				return nil, err
+			Exec: func(context *cmd.CommandContext) {
+				brightness, _ := context.GetIntArg(0)
+				context.SetResult(nil, service.GetHub().LightBrightnessSet(brightness))
 			},
 		},
 		AuthenticatingCommand: login,
@@ -375,10 +363,9 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "LightEnable",
 			Description: "Toggles the Home Hub LED on or off",
-			Exec: func(args []string) (result interface{}, err error) {
-				enable, _ := strconv.ParseBool(args[0])
-				err = service.GetHub().LightEnable(enable)
-				return nil, err
+			Exec: func(context *cmd.CommandContext) {
+				enable, _ := context.GetBooleanArg(0)
+				context.SetResult(nil, service.GetHub().LightEnable(enable))
 			},
 		},
 		AuthenticatingCommand: login,
@@ -387,7 +374,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "LightStatus",
 			Description: "Gets the status of the Home Hub LED",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().LightStatus() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().LightStatus()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -395,7 +382,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "LocalTime",
 			Description: "Gets local time from the Home Hub",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().LocalTime() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().LocalTime()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -403,8 +390,8 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "MaintenaceFirmwareVersion",
 			Description: "Gets the Home Hub maintenance firmware version",
-			Exec: func(args []string) (result interface{}, err error) {
-				return service.GetHub().MaintenaceFirmwareVersion()
+			Exec: func(context *cmd.CommandContext) {
+				context.SetResult(service.GetHub().MaintenaceFirmwareVersion())
 			},
 		},
 		AuthenticatingCommand: login,
@@ -413,12 +400,12 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "NatRules",
 			Description: "Gets any IPV4 NAT rules configured on the Home Hub",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().NatRules() },
-			PostExec: func(result interface{}, err error) error {
-				if err == nil {
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().NatRules()) },
+			PostExec: func(context *cmd.CommandContext) {
+				if !context.IsError() {
 					headerPattern := "%-5s%-25s%-15s%-25s%-25s%-25s%-25s%-10s\n"
 					dataPattern := "%-5d%-25s%-15t%-25d%-25d%-25d%-25d%-10s\n"
-					natRules := result.([]homehub.NatRule)
+					natRules := context.GetResult().([]homehub.NatRule)
 
 					fmt.Print("\n")
 					fmt.Printf(headerPattern, "--", "---------------------", "-------", "-------------------", "-----------------", "-------------------", "-----------------", "--------")
@@ -437,9 +424,7 @@ func initCommands() []cmd.Command {
 							natRules[i].Protocol,
 						)
 					}
-					return nil
 				}
-				return err
 			},
 		},
 		AuthenticatingCommand: login,
@@ -450,18 +435,18 @@ func initCommands() []cmd.Command {
 			Description: "Gets an IPV4 NAT rule configured for the specified ID",
 			ArgNames:    []string{"id"},
 			ArgTypes:    []string{"int"},
-			Exec: func(args []string) (result interface{}, err error) {
-				id, err := strconv.Atoi(args[0])
+			Exec: func(context *cmd.CommandContext) {
+				id, err := context.GetIntArg(0)
 				if err != nil {
 					parseErr := errors.New("ID must be a numeric value")
-					return nil, parseErr
+					context.SetResult(nil, parseErr)
 				}
-				return service.GetHub().NatRule(id)
+				context.SetResult(service.GetHub().NatRule(id))
 			},
-			PostExec: func(result interface{}, err error) error {
-				if err == nil {
+			PostExec: func(context *cmd.CommandContext) {
+				if !context.IsError() {
 					dataPattern := "%-25s%-5d\n%-25s%-25s\n%-25s%-25s\n%-25s%-25s\n%-25s%-15t\n%-25s%-25s\n%-25s%-25d\n%-25s%-25d\n%-25s%-25s\n%-25s%-25d\n%-25s%-25d\n%-25s%-25s\n%-25s%-10s\n"
-					natRule := result.(*homehub.NatRule)
+					natRule := context.GetResult().(*homehub.NatRule)
 
 					fmt.Print("\n")
 					fmt.Printf(dataPattern,
@@ -492,9 +477,7 @@ func initCommands() []cmd.Command {
 						"Protocol",
 						natRule.Protocol,
 					)
-					return nil
 				}
-				return err
 			},
 		},
 		AuthenticatingCommand: login,
@@ -505,21 +488,18 @@ func initCommands() []cmd.Command {
 			Description: "Deletes an IPV4 NAT rule configured for the specified ID",
 			ArgNames:    []string{"id"},
 			ArgTypes:    []string{"int"},
-			Exec: func(args []string) (result interface{}, err error) {
-				id, err := strconv.Atoi(args[0])
+			Exec: func(context *cmd.CommandContext) {
+				id, err := context.GetIntArg(0)
 				if err != nil {
 					parseErr := errors.New("ID must be a numeric value")
-					return nil, parseErr
+					context.SetResult(nil, parseErr)
 				}
-				deleteErr := service.GetHub().NatRuleDelete(id)
-				return nil, deleteErr
+				context.SetResult(nil, service.GetHub().NatRuleDelete(id))
 			},
-			PostExec: func(result interface{}, err error) error {
-				if err == nil {
+			PostExec: func(context *cmd.CommandContext) {
+				if !context.IsError() {
 					fmt.Printf("NAT rule successfully deleted\n")
-					return nil
 				}
-				return err
 			},
 		},
 		AuthenticatingCommand: login,
@@ -528,7 +508,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "PublicIPAddress",
 			Description: "Gets the Home Hub public IP address",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().PublicIPAddress() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().PublicIPAddress()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -536,7 +516,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "PublicSubnetMask",
 			Description: "Gets the Home Hub public IP subnet mask",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().PublicSubnetMask() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().PublicSubnetMask()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -544,10 +524,10 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "Reboot",
 			Description: "Reboots the Home Hub",
-			Exec: func(args []string) (result interface{}, err error) {
-				return nil, service.GetHub().Reboot()
+			Exec: func(context *cmd.CommandContext) {
+				context.SetResult(nil, service.GetHub().Reboot())
 			},
-			PostExec: func(result interface{}, err error) error {
+			PostExec: func(context *cmd.CommandContext) {
 				fmt.Print("\nWaiting for Home Hub to reboot...")
 				attempts := 0
 				for {
@@ -566,7 +546,6 @@ func initCommands() []cmd.Command {
 					}
 					time.Sleep(5000 * time.Millisecond)
 				}
-				return nil
 			},
 		},
 		AuthenticatingCommand: login,
@@ -575,7 +554,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "SambaHost",
 			Description: "Gets the Home Hub samba host name",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().SambaHost() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().SambaHost()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -583,7 +562,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "SambaIP",
 			Description: "Gets the Home Hub samba IP address",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().SambaIP() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().SambaIP()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -591,7 +570,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "SerialNumber",
 			Description: "Gets the Home Hub serial number",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().SerialNumber() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().SerialNumber()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -599,7 +578,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "SoftwareVersion",
 			Description: "Gets the Home Hub software version",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().SoftwareVersion() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().SoftwareVersion()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -607,7 +586,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "UpstreamSyncSpeed",
 			Description: "Gets the Home Hub upload speed",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().UpstreamSyncSpeed() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().UpstreamSyncSpeed()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -615,7 +594,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "Version",
 			Description: "Gets the Home Hub version",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().Version() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().Version()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -623,7 +602,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "WiFiSSID",
 			Description: "Gets the Home Hub WiFI SSID",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().WiFiSSID() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().WiFiSSID()) },
 		},
 		AuthenticatingCommand: login,
 	}
@@ -631,7 +610,7 @@ func initCommands() []cmd.Command {
 		GenericCommand: cmd.GenericCommand{
 			Name:        "WiFiSecurityMode",
 			Description: "Gets the Home Hub WiFI security mode",
-			Exec:        func(args []string) (result interface{}, err error) { return service.GetHub().WiFiSecurityMode() },
+			Exec:        func(context *cmd.CommandContext) { context.SetResult(service.GetHub().WiFiSecurityMode()) },
 		},
 		AuthenticatingCommand: login,
 	}

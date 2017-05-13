@@ -9,19 +9,23 @@ import (
 
 type FakeCommand struct{}
 
-func (c *FakeCommand) Execute(args []string) (result interface{}, err error) {
-	return "Test result", nil
+func (c *FakeCommand) Execute(context *CommandContext) {
+	context.SetResult("Test result", nil)
 }
 
 func (c *FakeCommand) ExecuteLifecylce(args []string) {
-	c.Execute(args)
+	context := &CommandContext{
+		args: args,
+	}
+
+	c.Execute(context)
 }
 
 func (c *FakeCommand) GetName() string {
 	return "TestCommand"
 }
 
-func (c *FakeCommand) Validate(args []string) bool {
+func (c *FakeCommand) Validate(context *CommandContext) bool {
 	return true
 }
 

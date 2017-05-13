@@ -10,45 +10,45 @@ type GenericCommand struct {
 	Description string
 	ArgNames    []string
 	ArgTypes    []string
-	PreExec     func(args []string) error
-	Exec        func(args []string) (result interface{}, err error)
-	PostExec    func(result interface{}, err error) error
+	PreExec     func(context *CommandContext)
+	Exec        func(context *CommandContext)
+	PostExec    func(context *CommandContext)
 }
 
 // ExecuteLifecylce runs the command execution lifecycle
 func (c *GenericCommand) ExecuteLifecylce(args []string) {
 
-	if helpRequested(args) {
+	context := &CommandContext{
+		args: args,
+	}
+
+	if helpRequested(context) {
 		c.Explain()
 		return
 	}
 
-	if c.Validate(args) {
+	if c.Validate(context) {
+		// Default PreExec
 		if c.PreExec == nil {
-			c.PreExec = func(args []string) error {
-				return nil
-			}
+			c.PreExec = func(context *CommandContext) {}
 		}
 
+		// Default PostExec
 		if c.PostExec == nil {
-			c.PostExec = func(result interface{}, err error) error {
-				if err != nil {
-					return err
-				} else {
-					if result != nil {
-						fmt.Println(result)
-					}
-					return nil
+			c.PostExec = func(context *CommandContext) {
+				if !context.IsError() && context.HasResult() {
+					fmt.Println(context.GetResult())
 				}
 			}
 		}
 
-		preErr := c.PreExec(args)
+		c.PreExec(context)
 
-		if preErr == nil {
-			postErr := c.PostExec(c.Execute(args))
-			if postErr != nil {
-				fmt.Println(postErr)
+		if !context.IsError() {
+			c.Execute(context)
+			c.PostExec(context)
+			if context.IsError() {
+				fmt.Println(context.err)
 			}
 		}
 	} else {
@@ -62,16 +62,16 @@ func (c *GenericCommand) GetName() string {
 }
 
 // Validate validates that the correct number of arguments were passed to the command
-func (c *GenericCommand) Validate(args []string) bool {
-	if len(args) != len(c.ArgNames) {
+func (c *GenericCommand) Validate(context *CommandContext) bool {
+	if len(context.args) != len(c.ArgNames) {
 		return false
 	}
 	return true
 }
 
 // Execute executes the command
-func (c *GenericCommand) Execute(args []string) (result interface{}, err error) {
-	return c.Exec(args)
+func (c *GenericCommand) Execute(context *CommandContext) {
+	c.Exec(context)
 }
 
 func (c *GenericCommand) Usage() {
@@ -89,6 +89,6 @@ func (c *GenericCommand) Explain() {
 	c.Usage()
 }
 
-func helpRequested(args []string) bool {
-	return (len(args) > 0) && (args[0] == "-help" || args[0] == "--help" || args[0] == "-h")
+func helpRequested(context *CommandContext) bool {
+	return (len(context.args) > 0) && (context.GetStringArg(0) == "-help" || context.GetStringArg(0) == "--help" || context.GetStringArg(0) == "-h")
 }

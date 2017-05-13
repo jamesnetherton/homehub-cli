@@ -15,11 +15,15 @@ type AuthenticationRequiringCommand struct {
 
 // ExecuteLifecylce runs the command execution lifecycle
 func (c *AuthenticationRequiringCommand) ExecuteLifecylce(args []string) {
+	context := &CommandContext{
+		args: args,
+	}
 	hub := service.GetHub()
-	if (!helpRequested(args)) && (hub == nil || !service.IsLoggedIn()) {
+
+	if (!helpRequested(context)) && (hub == nil || !service.IsLoggedIn()) {
 		fmt.Printf("\nYou are not logged in. Please login...\n\n")
-		success, err := c.AuthenticatingCommand.Execute([]string{})
-		if err != nil || !success.(bool) {
+		c.AuthenticatingCommand.Execute(context)
+		if context.IsError() || !context.GetResult().(bool) {
 			fmt.Println("Login failed")
 			return
 		}
