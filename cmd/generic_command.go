@@ -74,6 +74,7 @@ func (c *GenericCommand) Execute(context *CommandContext) {
 	c.Exec(context)
 }
 
+// Usage prints the usage statement for the command
 func (c *GenericCommand) Usage() {
 	fmt.Printf("Usage: %s ", c.Name)
 
@@ -84,6 +85,7 @@ func (c *GenericCommand) Usage() {
 	fmt.Println()
 }
 
+// Explain prints an explanatory usage message for the command
 func (c *GenericCommand) Explain() {
 	fmt.Printf("%s: %s\n\n", c.Name, c.Description)
 	c.Usage()

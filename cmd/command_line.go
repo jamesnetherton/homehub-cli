@@ -105,9 +105,8 @@ func (c *CommandLineParser) getMandatoryArgument(argumentName string, defaultVal
 	}
 	if defaultValue != "" {
 		return defaultValue, nil
-	} else {
-		return "", errors.New("Did not find an argument named " + argumentName)
 	}
+	return "", errors.New("Did not find an argument named " + argumentName)
 }
 
 func (c *CommandLineParser) findMatchingCommand(commandName string) Command {
