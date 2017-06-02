@@ -41,6 +41,20 @@ The `huburl` and `username` arguments are defaulted to the standard Home Hub IP 
 
 See `./homehub-cli --help` for all options.
 
+## Troubleshooting
+
+First check that your router hardware is [compatible](matrix.md) with the CLI. You can enable debugging within the CLI via the `EnableDebug` command.
+
+To enable debugging:
+
+`EnableDebug true`
+
+To disable debugging:
+
+`EnableDebug false`
+
+With debugging enabled, you'll see HTTP requests and responses being output whenever commands are executed.
+
 ## Building
 
     git clone git@github.com:jamesnetherton/homehub-cli.git $GOPATH/src/github.com/jamesnetherton/homehub-cli
