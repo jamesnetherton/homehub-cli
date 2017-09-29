@@ -1,6 +1,6 @@
 machine:
   environment:
-    GODIST: "go1.8.linux-amd64.tar.gz"
+    GODIST: "go1.9.linux-amd64.tar.gz"
     PATH: "/usr/local/go/bin:/usr/local/go_workspace/bin:~/.go_workspace/bin:${PATH}"
     GOPATH: "${HOME}/.go_workspace:/usr/local/go_workspace:${HOME}/.go_project"
     PROJECT: "${HOME}/.go_project/src/github.com/jamesnetherton/homehub-cli"
