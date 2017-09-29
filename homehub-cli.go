@@ -88,6 +88,7 @@ func initCommands() []cmd.Command {
 
 			context.SetResult(success, err)
 		},
+		PostExec: func(context *cmd.CommandContext) {},
 	}
 
 	enableDebug := &cmd.GenericCommand{
