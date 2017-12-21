@@ -35,7 +35,7 @@ func (c *CommandLineParser) Parse() (result bool, err error) {
 	if command != nil {
 		var i interface{} = command
 
-		_, requiresAuth := i.(AuthenticationRequiringCommand)
+		_, requiresAuth := i.(*AuthenticationRequiringCommand)
 
 		fullCommandLine := strings.Join(c.Args, " ")
 
@@ -80,7 +80,7 @@ func (c *CommandLineParser) Parse() (result bool, err error) {
 
 		fullCommandLine = strings.TrimSpace(strings.Replace(fullCommandLine, commandName, "", -1))
 
-		if len(fullCommandLine) == 0 {
+		if !requiresAuth || len(fullCommandLine) == 0 {
 			command.ExecuteLifecylce([]string{})
 		} else {
 			command.ExecuteLifecylce(strings.Split(fullCommandLine, " "))
