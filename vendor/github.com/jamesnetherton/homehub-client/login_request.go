@@ -3,6 +3,7 @@ package homehub
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -100,6 +101,10 @@ func (r *loginRequest) send() (re *response, err error) {
 	dump, _ = httputil.DumpResponse(httpResponse, true)
 	debug.Println(string(dump))
 
+	if httpResponse.StatusCode >= 400 {
+		return nil, fmt.Errorf("Error processing request. Hub returned HTTP response code: %d", httpResponse.StatusCode)
+	}
+
 	defer httpResponse.Body.Close()
 	response := &response{}
 	bodyBytes, err := ioutil.ReadAll(httpResponse.Body)
@@ -113,7 +118,6 @@ func (r *loginRequest) send() (re *response, err error) {
 	json.Unmarshal(bodyBytes, responseBody)
 	response.ResponseBody = *responseBody
 
-	// TODO: This logic doesn't really belong here
 	if responseBody.Reply != nil && responseBody.Reply.ReplyError.Description != "Ok" {
 		err := errors.New(responseBody.Reply.ReplyError.Description)
 		return nil, err

@@ -502,7 +502,7 @@ func TestLocalTime(t *testing.T) {
 
 func TestMaintenanceFirmwareVersion(t *testing.T) {
 	testAPIResponse(&apiTest{
-		method:          "MaintenaceFirmwareVersion",
+		method:          "MaintenanceFirmwareVersion",
 		apiStubResponse: "maintenance_firmware_version",
 		expectedResult:  "SG0B000000AA",
 		t:               t,

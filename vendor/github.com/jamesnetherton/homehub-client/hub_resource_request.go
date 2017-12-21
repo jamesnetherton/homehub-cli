@@ -2,6 +2,7 @@ package homehub
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
@@ -53,6 +54,10 @@ func (r *hubResourceRequest) send() (re *response, err error) {
 
 	dump, _ = httputil.DumpResponse(httpResponse, true)
 	debug.Println(string(dump))
+
+	if httpResponse.StatusCode >= 400 {
+		return nil, fmt.Errorf("Error processing request. Hub returned HTTP response code: %d", httpResponse.StatusCode)
+	}
 
 	defer httpResponse.Body.Close()
 	response := &response{}

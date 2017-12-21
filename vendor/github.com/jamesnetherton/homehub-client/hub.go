@@ -211,8 +211,8 @@ func (h *Hub) Login() (success bool, err error) {
 	return false, err
 }
 
-// MaintenaceFirmwareVersion returns the maintenance firmware version
-func (h *Hub) MaintenaceFirmwareVersion() (result string, err error) {
+// MaintenanceFirmwareVersion returns the maintenance firmware version
+func (h *Hub) MaintenanceFirmwareVersion() (result string, err error) {
 	return h.client.getXPathValueString(technicalLogFirmwareVersion)
 }
 
@@ -276,7 +276,7 @@ func (h *Hub) PublicSubnetMask() (result string, err error) {
 	return h.client.getXPathValueString(mySagemcomBoxDeviceInfoPublicSubnetMask)
 }
 
-// Reboot restarts router serial number
+// Reboot restarts the router
 func (h *Hub) Reboot() (err error) {
 	return h.client.doReboot()
 }
