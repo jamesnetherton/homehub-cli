@@ -21,9 +21,9 @@ test: build
 
 release: build
 	rm -rf release && mkdir release
-	mkdir -p build/linux  && GOOS=linux  go build -ldflags "-X main.version=$(VERSION)" -o build/linux/$(NAME)
-	mkdir -p build/darwin && GOOS=darwin go build -ldflags "-X main.version=$(VERSION)" -o build/darwin/$(NAME)
-	mkdir -p build/windows && GOOS=windows go build -ldflags "-X main.version=$(VERSION)" -o build/windows/$(NAME).exe
+	mkdir -p build/linux  && GOOS=linux  go build $(BUILDFLAGS) -o build/linux/$(NAME)
+	mkdir -p build/darwin && GOOS=darwin go build $(BUILDFLAGS) -o build/darwin/$(NAME)
+	mkdir -p build/windows && GOOS=windows go build $(BUILDFLAGS) -o build/windows/$(NAME).exe
 
 	tar -zcf release/$(NAME)-$(VERSION)-linux-$(ARCH).tar.gz -C build/linux $(NAME)
 	tar -zcf release/$(NAME)-$(VERSION)-darwin-$(ARCH).tar.gz -C build/darwin $(NAME)
