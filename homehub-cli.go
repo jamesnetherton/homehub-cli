@@ -61,7 +61,7 @@ func initCommands() []cmd.Command {
 
 	commands = append(commands,
 		login,
-		cmd.NewEnableDebugCommand(),
+		cmd.NewAboutCommand(),
 		cmd.NewBandwidthMonitorCommand(login),
 		cmd.NewBroadbandProductTypeCommand(login),
 		cmd.NewConnectedDevicesCommand(login),
@@ -74,6 +74,7 @@ func initCommands() []cmd.Command {
 		cmd.NewDhcpPoolStartCommand(login),
 		cmd.NewDhcpSubnetMaskCommand(login),
 		cmd.NewDownstreamSyncSpeedCommand(login),
+		cmd.NewEnableDebugCommand(),
 		cmd.NewEnableDhcpAuthoritativeCommand(login),
 		cmd.NewEventLogCommand(login),
 		cmd.NewHardwareVersionCommand(login),

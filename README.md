@@ -43,7 +43,13 @@ See `./homehub-cli --help` for all options.
 
 ## Troubleshooting
 
-First check that your router hardware is [compatible](matrix.md) with the CLI. You can enable debugging within the CLI via the `EnableDebug` command.
+### Compatible firmware versions
+
+First check that the CLI is [compatible](matrix.md) with your router hardware. You can run the `About` command to see which firmware version the homehub-cli was tested and verified against.
+
+### Enable debug logging
+
+You can enable debugging within the CLI via the `EnableDebug` command.
 
 To enable debugging:
 

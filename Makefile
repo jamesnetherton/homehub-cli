@@ -1,10 +1,19 @@
 ARCH=$(shell uname -m)
 NAME=homehub-cli
+ROOT_PACKAGE := $(shell go list ./cmd)
+FIRMWARE=$(shell cat firmware.txt)
 VERSION=$(shell cat version.txt)
+REVISION=$(shell git rev-parse --short HEAD || echo 'Unknown')
+BUILD_DATE=$(shell date +%d/%m/%Y)
+BUILDFLAGS := -ldflags \
+  " -X $(ROOT_PACKAGE).version=$(VERSION)\
+    -X $(ROOT_PACKAGE).firmware=$(FIRMWARE)\
+    -X $(ROOT_PACKAGE).revision=$(REVISION)\
+    -X $(ROOT_PACKAGE).date=$(BUILD_DATE)"
 
 build:
 	rm -rf build
-	go build -o build/$(NAME) $(NAME).go
+	go build $(BUILDFLAGS) -o build/$(NAME) $(NAME).go
 
 test: build
 	go test -v github.com/jamesnetherton/homehub-cli/cmd \

@@ -33,44 +33,51 @@ func (c *CommandLineParser) Parse() (result bool, err error) {
 	command := c.findMatchingCommand(commandName)
 
 	if command != nil {
+		var i interface{} = command
+
+		_, requiresAuth := i.(AuthenticationRequiringCommand)
+
 		fullCommandLine := strings.Join(c.Args, " ")
 
-		re := regexp.MustCompile("(--.*)")
-		args := re.FindAllString(fullCommandLine, -1)
+		if requiresAuth {
+			re := regexp.MustCompile("(--.*)")
+			args := re.FindAllString(fullCommandLine, -1)
 
-		if len(args) == 0 {
-			return false, errors.New("Home Hub login credentials are missing")
-		}
-
-		for _, match := range re.FindAllString(fullCommandLine, -1) {
-			fullCommandLine = strings.Replace(fullCommandLine, match, "", -1)
-		}
-
-		hubURL, urlErr := c.getMandatoryArgument("huburl", "http://192.168.1.254", args[0])
-		if urlErr != nil {
-			return false, errors.New("--huburl flag is missing or empty")
-		}
-
-		userName, userNameErr := c.getMandatoryArgument("username", "admin", args[0])
-		if userNameErr != nil {
-			return false, errors.New("--username flag is missing or empty")
-		}
-
-		password, passwordErr := c.getMandatoryArgument("password", "", args[0])
-		if passwordErr != nil {
-			return false, errors.New("--password flag is missing or empty")
-		}
-
-		if service.IsLoggedIn() == false {
-			hub := service.NewHub(hubURL, userName, password)
-			success, err := hub.Login()
-
-			if !success || err != nil {
-				return false, errors.New("Login failed")
+			if len(args) == 0 {
+				return false, errors.New("Home Hub login credentials are missing")
 			}
+
+			for _, match := range re.FindAllString(fullCommandLine, -1) {
+				fullCommandLine = strings.Replace(fullCommandLine, match, "", -1)
+			}
+
+			hubURL, urlErr := c.getMandatoryArgument("huburl", "http://192.168.1.254", args[0])
+			if urlErr != nil {
+				return false, errors.New("--huburl flag is missing or empty")
+			}
+
+			userName, userNameErr := c.getMandatoryArgument("username", "admin", args[0])
+			if userNameErr != nil {
+				return false, errors.New("--username flag is missing or empty")
+			}
+
+			password, passwordErr := c.getMandatoryArgument("password", "", args[0])
+			if passwordErr != nil {
+				return false, errors.New("--password flag is missing or empty")
+			}
+
+			if service.IsLoggedIn() == false {
+				hub := service.NewHub(hubURL, userName, password)
+				success, err := hub.Login()
+
+				if !success || err != nil {
+					return false, errors.New("Login failed")
+				}
+			}
+
+			service.AuthenticationComplete()
 		}
 
-		service.AuthenticationComplete()
 		fullCommandLine = strings.TrimSpace(strings.Replace(fullCommandLine, commandName, "", -1))
 
 		if len(fullCommandLine) == 0 {
