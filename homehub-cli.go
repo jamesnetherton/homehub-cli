@@ -87,6 +87,7 @@ func initCommands() []cmd.Command {
 		cmd.NewMaintenanceFirmwareVersionCommand(login),
 		cmd.NewNatRulesCommand(login),
 		cmd.NewNatRuleCommand(login),
+		cmd.NewNatRuleCreateCommand(login),
 		cmd.NewNatRuleDeleteCommand(login),
 		cmd.NewPublicIPAddressCommand(login),
 		cmd.NewPublicSubnetMaskCommand(login),
