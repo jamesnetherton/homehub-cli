@@ -16,7 +16,7 @@ func NewNatRuleCreateCommand(authenticatingCommand *GenericCommand) *Authenticat
 		GenericCommand: GenericCommand{
 			Name:        "NatRuleCreate",
 			Description: "Creates an IPV4 NAT rule",
-			ArgNames:    []string{"name", "ip address", "external port start", "external port end", "internal port start", "protocol", "action"},
+			ArgNames:    []string{"name", "ip-address", "external-port-start", "external-port-end", "internal-port-start", "protocol", "action"},
 			ArgTypes:    []string{"string", "string", "int", "int", "int", "string", "string"},
 			Exec: func(context *CommandContext) {
 				name := context.GetStringArg(0)
