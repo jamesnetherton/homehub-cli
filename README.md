@@ -27,7 +27,7 @@ homehub-cli.exe
 
 Pressing the `TAB` key shows all of the available commands. You can get help for specific commands by doing:
 
-`CommandName --help`.
+`CommandName --help`
 
 #### Running indivdual commands
 
