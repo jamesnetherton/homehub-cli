@@ -19,12 +19,16 @@ func NewRebootCommand(authenticatingCommand *GenericCommand) *AuthenticationRequ
 			},
 			PostExec: func(context *CommandContext) {
 				fmt.Print("\nWaiting for Home Hub to reboot...")
+
+				// Give the hub a chance to initialise its reboot sequence
+				time.Sleep(10000 * time.Millisecond)
+
 				attempts := 0
 				for {
 					attempts++
 					response, err := http.Get(service.GetHub().URL)
 					if err != nil || response.StatusCode != 200 {
-						if attempts == 24 {
+						if attempts == 25 {
 							fmt.Println("\nGave up waiting for Home Hub to become available")
 							break
 						} else {
