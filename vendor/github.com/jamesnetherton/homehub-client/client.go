@@ -18,10 +18,23 @@ func newClient(URL string, username string, password string) *client {
 	auth := authData{
 		url:      URL,
 		userName: username,
-		password: password,
+		password: hexmd5(password),
 	}
 
 	return &client{auth}
+}
+
+func (c *client) login() (err error) {
+	req := newLoginRequest(&c.authData)
+	resp, err := req.send()
+
+	if err == nil {
+		c.authData.sessionID = strconv.Itoa(resp.ResponseBody.Reply.ResponseActions[0].ResponseCallbacks[0].Parameters.ID)
+		c.authData.nonce = resp.ResponseBody.Reply.ResponseActions[0].ResponseCallbacks[0].Parameters.Nonce
+		return nil
+	}
+
+	return err
 }
 
 func (c *client) doReboot() (err error) {

@@ -207,11 +207,11 @@ func TestBandwidthMonitor(t *testing.T) {
 	}
 
 	if res.Entries[0].DownloadMegabytes != 10959 {
-		t.Fatalf("Expected bandwidth log entry 1 download megabytes 10959 but got %s", res.Entries[0].DownloadMegabytes)
+		t.Fatalf("Expected bandwidth log entry 1 download megabytes 10959 but got %d", res.Entries[0].DownloadMegabytes)
 	}
 
 	if res.Entries[0].UploadMegabytes != 1301 {
-		t.Fatalf("Expected bandwidth log entry 1 upload megabytes 1301 but got %s", res.Entries[0].UploadMegabytes)
+		t.Fatalf("Expected bandwidth log entry 1 upload megabytes 1301 but got %d", res.Entries[0].UploadMegabytes)
 	}
 
 	if res.Entries[1].MACAddress != "a1:b9:c8:d7:e6:f5" {
@@ -223,11 +223,11 @@ func TestBandwidthMonitor(t *testing.T) {
 	}
 
 	if res.Entries[1].DownloadMegabytes != 218 {
-		t.Fatalf("Expected bandwidth log entry 2 download megabytes 218 but got %s", res.Entries[1].DownloadMegabytes)
+		t.Fatalf("Expected bandwidth log entry 2 download megabytes 218 but got %d", res.Entries[1].DownloadMegabytes)
 	}
 
 	if res.Entries[1].UploadMegabytes != 30 {
-		t.Fatalf("Expected bandwidth log entry 2 upload megabytes ,30 but got %s", res.Entries[1].UploadMegabytes)
+		t.Fatalf("Expected bandwidth log entry 2 upload megabytes ,30 but got %d", res.Entries[1].UploadMegabytes)
 	}
 }
 
@@ -528,7 +528,7 @@ func TestNatRules(t *testing.T) {
 	}
 
 	if res[0].AllExternalInterfaces != false {
-		t.Fatalf("Expected NAT rule AllExternalInterfaces false but got %s", res[0].AllExternalInterfaces)
+		t.Fatalf("Expected NAT rule AllExternalInterfaces false but got %v", res[0].AllExternalInterfaces)
 	}
 
 	if res[0].Creator != "HUB_TESTER" {
@@ -540,7 +540,7 @@ func TestNatRules(t *testing.T) {
 	}
 
 	if res[0].Enable != true {
-		t.Fatalf("Expected NAT rule enable true but got %s", res[0].Enable)
+		t.Fatalf("Expected NAT rule enable true but got %v", res[0].Enable)
 	}
 
 	if res[0].ExternalPort != 1111 {
@@ -603,7 +603,7 @@ func TestNatRule(t *testing.T) {
 	}
 
 	if natRule.AllExternalInterfaces != false {
-		t.Fatalf("Expected NAT rule AllExternalInterfaces false but got %s", natRule.AllExternalInterfaces)
+		t.Fatalf("Expected NAT rule AllExternalInterfaces false but got %v", natRule.AllExternalInterfaces)
 	}
 
 	if natRule.Creator != "HUB_TESTER" {
@@ -615,7 +615,7 @@ func TestNatRule(t *testing.T) {
 	}
 
 	if natRule.Enable != true {
-		t.Fatalf("Expected NAT rule enable true but got %s", natRule.Enable)
+		t.Fatalf("Expected NAT rule enable true but got %v", natRule.Enable)
 	}
 
 	if natRule.ExternalPort != 1111 {
@@ -828,6 +828,112 @@ func TestVersion(t *testing.T) {
 		method:          "Version",
 		apiStubResponse: "hub_version",
 		expectedResult:  "Home Hub 60 Type A",
+		t:               t,
+	})
+}
+
+func TestWiFiFrequency24Ghz(t *testing.T) {
+	server, hub := mockAPIClientServer("wifi_frequency24")
+	defer server.Close()
+
+	frequency, err := hub.WiFiFrequency24Ghz()
+
+	if err != nil {
+		t.Fatalf("Error returned from WiFiFrequency24Ghz %s", err.Error())
+	}
+
+	if frequency.Alias != "RADIO2G4" {
+		t.Fatalf("Expected frequency alias RADIO2G4 but got %s", frequency.Alias)
+	}
+
+	if frequency.AvailableChannels != "1,2,3,4,5" {
+		t.Fatalf("Expected frequency available channels b,g,n but got %s", frequency.AvailableChannels)
+	}
+
+	if frequency.Channel != 1 {
+		t.Fatalf("Expected frequency channel 1 but got %d", frequency.Channel)
+	}
+
+	if frequency.Enable != true {
+		t.Fatalf("Expected frequency enable true but got %t", frequency.Enable)
+	}
+
+	if frequency.OperatingStandards != "b,g,n" {
+		t.Fatalf("Expected frequency operating standards b,g,n but got %s", frequency.OperatingStandards)
+	}
+
+	if frequency.SupportedStandards != "b,g,n" {
+		t.Fatalf("Expected frequency supported standards b,g,n but got %s", frequency.SupportedStandards)
+	}
+
+	if frequency.Status != "UP" {
+		t.Fatalf("Expected frequency status UP but got %s", frequency.Status)
+	}
+
+	if frequency.UID != 1 {
+		t.Fatalf("Expected frequency UID 1 but got %d", frequency.UID)
+	}
+}
+
+func TestWiFiFrequency24GhzChannelSet(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "WiFiFrequency24GhzChannelSet",
+		methodArgs:      []interface{}{6},
+		apiStubResponse: "wifi_frequency24_channel_set",
+		expectedResult:  nil,
+		t:               t,
+	})
+}
+
+func TestWiFiFrequency5Ghz(t *testing.T) {
+	server, hub := mockAPIClientServer("wifi_frequency5")
+	defer server.Close()
+
+	frequency, err := hub.WiFiFrequency5Ghz()
+
+	if err != nil {
+		t.Fatalf("Error returned from WiFiFrequency5Ghz %s", err.Error())
+	}
+
+	if frequency.Alias != "RADIO5G" {
+		t.Fatalf("Expected frequency alias RADIO5G but got %s", frequency.Alias)
+	}
+
+	if frequency.AvailableChannels != "1,2,3,4,5" {
+		t.Fatalf("Expected frequency available channels b,g,n but got %s", frequency.AvailableChannels)
+	}
+
+	if frequency.Channel != 1 {
+		t.Fatalf("Expected frequency channel 1 but got %d", frequency.Channel)
+	}
+
+	if frequency.Enable != true {
+		t.Fatalf("Expected frequency enable true but got %t", frequency.Enable)
+	}
+
+	if frequency.OperatingStandards != "a,n,ac" {
+		t.Fatalf("Expected frequency operating standards a,n,ac but got %s", frequency.OperatingStandards)
+	}
+
+	if frequency.SupportedStandards != "a,n,ac" {
+		t.Fatalf("Expected frequency supported standards a,n,ac but got %s", frequency.SupportedStandards)
+	}
+
+	if frequency.Status != "UP" {
+		t.Fatalf("Expected frequency status UP but got %s", frequency.Status)
+	}
+
+	if frequency.UID != 1 {
+		t.Fatalf("Expected frequency UID 1 but got %d", frequency.UID)
+	}
+}
+
+func TestWiFiFrequency5GhzChannelSet(t *testing.T) {
+	testAPIResponse(&apiTest{
+		method:          "WiFiFrequency5GhzChannelSet",
+		methodArgs:      []interface{}{36},
+		apiStubResponse: "wifi_frequency5_channel_set",
+		expectedResult:  nil,
 		t:               t,
 	})
 }

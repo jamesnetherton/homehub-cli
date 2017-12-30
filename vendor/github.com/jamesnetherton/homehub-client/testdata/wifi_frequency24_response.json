@@ -1,0 +1,1350 @@
+{
+  "reply": {
+    "actions": [
+      {
+        "callbacks": [
+          {
+            "parameters": {
+              "capability": {
+                "attributes": [
+                  {
+                    "description": "Node uniq identifier",
+                    "flags": {
+                      "key": true,
+                      "read-only": true,
+                      "value": true,
+                      "xml-attribute": true
+                    },
+                    "name": "uid",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "Enable",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "StoppedBy",
+                    "restrictions": {
+                      "max-length": 1024
+                    },
+                    "type": "interface:Interface:StoppedBy xmo:str xmo:value"
+                  },
+                  {
+                    "default-value": "DOWN",
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "Status",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "UP",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "DOWN",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "UNKNOWN",
+                          "value": "2"
+                        },
+                        {
+                          "description": "",
+                          "name": "DORMANT",
+                          "value": "3"
+                        },
+                        {
+                          "description": "",
+                          "name": "NOTPRESENT",
+                          "value": "4"
+                        },
+                        {
+                          "description": "",
+                          "name": "LOWERLAYERDOWN",
+                          "value": "5"
+                        },
+                        {
+                          "description": "",
+                          "name": "ERROR",
+                          "value": "6"
+                        }
+                      ]
+                    },
+                    "type": "interface:Interface:Status xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "key": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "Alias",
+                    "restrictions": {
+                      "max-length": 64
+                    },
+                    "type": "interface:Interface:Alias xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "Name",
+                    "restrictions": {
+                      "max-length": 64
+                    },
+                    "type": "interface:Interface:Name xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "statistic": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "LastChange",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "LowerLayers",
+                    "restrictions": {
+                      "max-length": 1024
+                    },
+                    "type": "interface:Interface:LowerLayers xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "ConnectionTime",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "IfcName",
+                    "restrictions": {
+                      "max-length": 64
+                    },
+                    "type": "interface:Interface:IfcName xmo:str xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "Upstream",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "MaxBitRate",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "SupportedFrequencyBands",
+                    "type": "xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "OperatingFrequencyBand",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "2_4GHZ",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "5GHZ",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:OperatingFrequencyBand xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "SupportedStandards",
+                    "type": "xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "OperatingStandards",
+                    "type": "xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "PossibleChannels",
+                    "restrictions": {
+                      "max-length": 1024
+                    },
+                    "type": "wifi:Radio:PossibleChannels xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "statistic": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "ChannelsInUse",
+                    "restrictions": {
+                      "max-length": 1024
+                    },
+                    "type": "wifi:Radio:ChannelsInUse xmo:str xmo:value"
+                  },
+                  {
+                    "default-value": "1",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "Channel",
+                    "restrictions": {
+                      "max-value-inclusive": 255,
+                      "min-value-inclusive": 1
+                    },
+                    "type": "wifi:Radio:Channel xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AutoChannelSupported",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AutoChannelEnable",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AutoChannelRefreshPeriod",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "OperatingChannelBandwidth",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "20MHZ",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "40MHZ",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "AUTO",
+                          "value": "2"
+                        },
+                        {
+                          "description": "",
+                          "name": "80MHZ",
+                          "value": "3"
+                        },
+                        {
+                          "description": "",
+                          "name": "160MHZ",
+                          "value": "4"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:OperatingChannelBandwidth xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "ExtensionChannel",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "ABOVECONTROLCHANNEL",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "BELOWCONTROLCHANNEL",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "AUTO",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:ExtensionChannel xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "GuardInterval",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "400NSEC",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "800NSEC",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "AUTO",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:GuardInterval xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "MCS",
+                    "restrictions": {
+                      "max-value-inclusive": 31,
+                      "min-value-inclusive": -1
+                    },
+                    "type": "wifi:Radio:MCS xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "TransmitPowerSupported",
+                    "restrictions": {
+                      "max-length": 1024
+                    },
+                    "type": "wifi:Radio:TransmitPowerSupported xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "TransmitPower",
+                    "restrictions": {
+                      "max-value-inclusive": 100,
+                      "min-value-inclusive": -1
+                    },
+                    "type": "wifi:Radio:TransmitPower xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "IEEE80211hSupported",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "IEEE80211hEnabled",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "RegulatoryDomain",
+                    "restrictions": {
+                      "reg-exp": {
+                        "pattern": "^([A-Z][A-Z][ OI])?$"
+                      }
+                    },
+                    "type": "wifi:Radio:RegulatoryDomain xmo:str xmo:value"
+                  },
+                  {
+                    "default-value": "7",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "RetryLimit",
+                    "restrictions": {
+                      "max-value-inclusive": 7
+                    },
+                    "type": "wifi:Radio:RetryLimit xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "CCARequest",
+                    "restrictions": {
+                      "max-length": 22
+                    },
+                    "type": "wifi:Radio:CCARequest xmo:hexbinary xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "CCAReport",
+                    "restrictions": {
+                      "max-length": 24,
+                      "min-length": 24
+                    },
+                    "type": "wifi:Radio:CCAReport xmo:hexbinary xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "RPIHistogramRequest",
+                    "restrictions": {
+                      "max-length": 11
+                    },
+                    "type": "wifi:Radio:RPIHistogramRequest xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "RPIHistogramReport",
+                    "restrictions": {
+                      "max-length": 19,
+                      "min-length": 19
+                    },
+                    "type": "wifi:Radio:RPIHistogramReport xmo:str xmo:value"
+                  },
+                  {
+                    "default-value": "2346",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "FragmentationThreshold",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "2347",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "RTSThreshold",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "6",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "LongRetryLimit",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "100",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "BeaconPeriod",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "1",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "DTIMPeriod",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "PacketAggregationEnable",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "2",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "PreambleType",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "SHORT",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "LONG",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "AUTO",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:PreambleType xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "BasicDataTransmitRates",
+                    "type": "wifi:Radio:BasicDataTransmitRates xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "OperationalDataTransmitRates",
+                    "type": "wifi:Radio:OperationalDataTransmitRates xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "SupportedDataTransmitRates",
+                    "type": "wifi:Radio:SupportedDataTransmitRates xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "capability": true,
+                      "node": true,
+                      "statistic": true,
+                      "xml-child": true
+                    },
+                    "name": "Stats",
+                    "type": "interface:RadioStats interface:Stats xmo:extended-node xmo:child-node xmo:node"
+                  },
+                  {
+                    "default-value": "InfrastructureAccessPoint",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "DeviceOperationMode",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "InfrastructureAccessPoint",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "WirelessBridge",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "WirelessRepeater",
+                          "value": "2"
+                        },
+                        {
+                          "description": "",
+                          "name": "WirelessStation",
+                          "value": "3"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:DeviceOperationMode xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "LocationDescription",
+                    "restrictions": {
+                      "max-length": 4096
+                    },
+                    "type": "wifi:Radio:LocationDescription xmo:str xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "VoWEnable",
+                    "type": "wifi:Radio:VoWEnable xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "capability": true,
+                      "config": true,
+                      "node": true,
+                      "xml-child": true
+                    },
+                    "name": "SiteSurvey",
+                    "type": "wifi:Radio:SiteSurvey xmo:extended-node xmo:child-node xmo:node"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AutoChannelTrigger",
+                    "type": "wifi:Radio:AutoChannelTrigger xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "ChannelHoppingEnable",
+                    "type": "wifi:Radio:ChannelHoppingEnable xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "capability": true,
+                      "config": true,
+                      "node": true,
+                      "xml-child": true
+                    },
+                    "name": "WirelessScan",
+                    "type": "wifi:Radio:WirelessScan xmo:extended-node xmo:child-node xmo:node"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "capability": true,
+                      "config": true,
+                      "node": true,
+                      "xml-child": true
+                    },
+                    "name": "AdHocScan",
+                    "type": "wifi:Radio:AdHocScan xmo:extended-node xmo:child-node xmo:node"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "SupportedChannelBandwidth",
+                    "type": "xmo:str xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "DFSChannel",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "FULL_SUPPORT",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "ACS_SUPPORT",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "MANUAL_SUPPORT",
+                          "value": "2"
+                        },
+                        {
+                          "description": "",
+                          "name": "NO_SUPPORT",
+                          "value": "3"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:DFSChannel xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "status": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "ChannelHoppingStatus",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "BurstModeEnable",
+                    "type": "wifi:Radio:BurstModeEnable xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "25",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "TransmitPowerMax",
+                    "restrictions": {
+                      "max-value-inclusive": 30,
+                      "min-value-inclusive": 10
+                    },
+                    "type": "wifi:Radio:TransmitPowerMax xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "-1",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AutoChannelLockoutPeriod",
+                    "type": "wifi:Radio:AutoChannelLockoutPeriod xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "-1",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AutoChannelMaxAcs",
+                    "type": "wifi:Radio:AutoChannelMaxAcs xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "-1",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AutoChannelAcsTriggerVar",
+                    "type": "wifi:Radio:AutoChannelAcsTriggerVar xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "DLMUMIMOEnabled",
+                    "type": "wifi:Radio:DLMUMIMOEnabled xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "RxSTBC",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "DISABLED",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "1SS_SUPPORT",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "2SS_SUPPORT",
+                          "value": "2"
+                        },
+                        {
+                          "description": "",
+                          "name": "3SS_SUPPORT",
+                          "value": "3"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:RxSTBC xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "TxSTBC",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "DISABLED",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "ENABLED",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "AUTO",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:TxSTBC xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "TxLDPC",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "DISABLED",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "ENABLED",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "AUTO",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:TxLDPC xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "WeatherChannelsEnabled",
+                    "type": "wifi:Radio:WeatherChannelsEnabled xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "MAUIEnabled",
+                    "type": "wifi:Radio:MAUIEnabled xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "true",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "GreenAPEnabled",
+                    "type": "wifi:Radio:GreenAPEnabled xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "20",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "GreenAPDelay",
+                    "type": "xmo:uint32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "true",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "Diversity11b",
+                    "type": "wifi:Radio:Diversity11b xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "true",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "SingleTxCCK",
+                    "type": "wifi:Radio:SingleTxCCK xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "SpatialStream",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "DEFAULT",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "1SS",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "2SS",
+                          "value": "2"
+                        },
+                        {
+                          "description": "",
+                          "name": "3SS",
+                          "value": "3"
+                        },
+                        {
+                          "description": "",
+                          "name": "4SS",
+                          "value": "4"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:SpatialStream xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "OperatingMCSSet",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "STANDARD_HT_VHT",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "STANDARD_HT_VHT_HT256",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "STANDARD_HT_VHT_VHT1024",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:OperatingMCSSet xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "children": [
+                      {
+                        "description": "",
+                        "flags": {
+                          "capability": true,
+                          "config": true,
+                          "node": true,
+                          "xml-child": true
+                        },
+                        "name": "ACSHistory",
+                        "type": "wifi:ACSHistory xmo:list-node xmo:uid-node xmo:extended-node xmo:child-node xmo:node"
+                      }
+                    ],
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "has-dynamic-extension": true,
+                      "list": true,
+                      "xml-child": true
+                    },
+                    "name": "ACSHistories",
+                    "type": "wifi:Radio:ACSHistories xmo:list xmo:container"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "capability": true,
+                      "config": true,
+                      "node": true,
+                      "xml-child": true
+                    },
+                    "name": "ACSLastScan",
+                    "type": "wifi:ACSLastScan xmo:extended-node xmo:child-node xmo:node"
+                  },
+                  {
+                    "default-value": "0",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AMSDU",
+                    "type": "wifi:Radio:AMSDU xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "1",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AMPDU",
+                    "type": "wifi:Radio:AMPDU xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "64",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "AMPDUMPDU",
+                    "type": "wifi:Radio:AMPDUMPDU xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "statistic": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "gModeProtectionEnabled",
+                    "type": "wifi:Radio:gModeProtectionEnabled xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "TransmitBeamForming",
+                    "type": "wifi:Radio:TransmitBeamForming xmo:boolean xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "ATFEnable",
+                    "type": "xmo:boolean xmo:value"
+                  },
+                  {
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "ATFMode",
+                    "restrictions": {
+                      "enum-values": [
+                        {
+                          "description": "",
+                          "name": "EqualSharing",
+                          "value": "0"
+                        },
+                        {
+                          "description": "",
+                          "name": "PrivateStaFirst",
+                          "value": "1"
+                        },
+                        {
+                          "description": "",
+                          "name": "CriticalStaFirst",
+                          "value": "2"
+                        }
+                      ]
+                    },
+                    "type": "wifi:Radio:ATFMode xmo:int32 xmo:number xmo:value"
+                  },
+                  {
+                    "default-value": "false",
+                    "description": "",
+                    "flags": {
+                      "config": true,
+                      "value": true,
+                      "xml-child": true
+                    },
+                    "name": "Enable11ac2G",
+                    "type": "wifi:Radio:Enable11ac2G xmo:boolean xmo:value"
+                  }
+                ],
+                "description": "",
+                "flags": {
+                  "capability": true,
+                  "config": true,
+                  "node": true,
+                  "xml-child": true
+                },
+                "name": "Radio",
+                "type": "wifi:Radio interface:Interface xmo:list-node xmo:uid-node xmo:extended-node xmo:child-node xmo:node"
+              },
+              "value": {
+                "Radio": {
+                  "Alias": "RADIO2G4",
+                  "Enable": true,
+                  "Channel": 1,
+                  "ChannelsInUse": "1,2,3,4,5",
+                  "Status": "UP",
+                  "uid": 1,
+                  "SupportedStandards": "b,g,n",
+                  "OperatingStandards": "b,g,n"
+                }
+              }
+            },
+            "result": {
+              "code": 16777238,
+              "description": "Applied"
+            },
+            "uid": 1,
+            "xpath": "Device/WiFi/Radios/Radio[@uid='1']"
+          }
+        ],
+        "error": {
+          "code": 16777238,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
+      }
+    ],
+    "error": {
+      "code": 16777216,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
+  }
+}

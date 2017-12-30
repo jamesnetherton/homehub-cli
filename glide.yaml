@@ -4,4 +4,4 @@ import:
   version: ~1.4.0
 - package: github.com/bgentry/speakeasy
 - package: github.com/jamesnetherton/homehub-client
-  version: ~0.6.0
+  version: ~0.7.0

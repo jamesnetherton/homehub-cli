@@ -98,6 +98,10 @@ func initCommands() []cmd.Command {
 		cmd.NewSoftwareVersionCommand(login),
 		cmd.NewUpstreamSyncSpeedCommand(login),
 		cmd.NewVersionCommand(login),
+		cmd.NewWiFiFrquency24GhzCommand(login),
+		cmd.NewWiFiFrequency24GhzChannelSetCommand(login),
+		cmd.NewWiFiFrquency5GhzCommand(login),
+		cmd.NewWiFiFrequency5GhzChannelSetCommand(login),
 		cmd.NewWiFiSSIDCommand(login),
 		cmd.NewWiFiSecurityModeCommand(login))
 	return commands

@@ -16,7 +16,7 @@ type Hub struct {
 
 // New creates a new Hub client for interacting with the router
 func New(URL string, username string, password string) *Hub {
-	c := newClient(URL+"/cgi/json-req", username, hexmd5(password))
+	c := newClient(URL+"/cgi/json-req", username, password)
 	return &Hub{c, URL}
 }
 
@@ -199,12 +199,9 @@ func (h *Hub) LocalTime() (result string, err error) {
 
 // Login authenticates a user
 func (h *Hub) Login() (success bool, err error) {
-	req := newLoginRequest(&h.client.authData)
-	resp, err := req.send()
+	err = h.client.login()
 
 	if err == nil {
-		h.client.authData.sessionID = strconv.Itoa(resp.ResponseBody.Reply.ResponseActions[0].ResponseCallbacks[0].Parameters.ID)
-		h.client.authData.nonce = resp.ResponseBody.Reply.ResponseActions[0].ResponseCallbacks[0].Parameters.Nonce
 		return true, nil
 	}
 
@@ -309,6 +306,40 @@ func (h *Hub) UpstreamSyncSpeed() (result int, err error) {
 // Version returns the router version
 func (h *Hub) Version() (result string, err error) {
 	return h.client.getXPathValueString(mySagemcomBoxDeviceInfoProductClass)
+}
+
+// WiFiFrequency24Ghz returns information about the WiFI 2.4GHz frequency
+func (h *Hub) WiFiFrequency24Ghz() (result *WiFiFrequency, err error) {
+	var radioType radio
+	valueType, err := h.client.getXPathValueType(mySagemcomBoxDeviceInfoWifi24, reflect.TypeOf(radioType))
+
+	if err == nil {
+		return &valueType.(*radio).WiFiFrequency, err
+	}
+
+	return nil, err
+}
+
+// WiFiFrequency24GhzChannelSet sets the operating channel for the 2.4Ghz frequency
+func (h *Hub) WiFiFrequency24GhzChannelSet(channel int) (err error) {
+	return h.client.setXPathValue(technicalLogWifiChannel24, channel)
+}
+
+// WiFiFrequency5Ghz returns information about the WiFI 5GHz frequency
+func (h *Hub) WiFiFrequency5Ghz() (result *WiFiFrequency, err error) {
+	var radioType radio
+	valueType, err := h.client.getXPathValueType(mySagemcomBoxDeviceInfoWifi5O, reflect.TypeOf(radioType))
+
+	if err == nil {
+		return &valueType.(*radio).WiFiFrequency, err
+	}
+
+	return nil, err
+}
+
+// WiFiFrequency5GhzChannelSet sets the operating channel for the 5Ghz frequency
+func (h *Hub) WiFiFrequency5GhzChannelSet(channel int) (err error) {
+	return h.client.setXPathValue(technicalLogWifiChannel5, channel)
 }
 
 // WiFiSecurityMode returns the WiFi security mode in use
