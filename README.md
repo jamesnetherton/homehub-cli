@@ -37,6 +37,12 @@ You can run indivdual commands outside of the CLI shell by specifying the desire
 ./homehub-cli Reboot --huburl=http://192.168.1.254 --username=admin --password=secret
 ```
 
+If the command requires arguments, you can pass them along like this.
+
+```
+./homehub-cli WiFiFrequency24GhzChannelSet 6 --huburl=http://192.168.1.254 --username=admin --password=secret
+```
+
 The `huburl` and `username` arguments are defaulted to the standard Home Hub IP address and admin user name. So you can omit these arguments if you want to and just specify the `password`.
 
 See `./homehub-cli --help` for all options.
