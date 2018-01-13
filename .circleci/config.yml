@@ -1,0 +1,27 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.9
+
+    working_directory: /go/src/github.com/jamesnetherton/homehub-cli
+
+    steps:
+      - checkout
+
+      - setup_remote_docker:
+          version: 17.11.0-ce
+
+      - run:
+          command: |
+            make test
+
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "release" ]; then
+              make release
+              docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+              docker push jamesnetherton/homehub-cli:latest
+              docker push jamesnetherton/homehub-cli:$(cat /go/src/github.com/jamesnetherton/homehub-cli/version.txt)
+              docker logout
+            fi
