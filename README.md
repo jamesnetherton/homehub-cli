@@ -47,6 +47,26 @@ The `huburl` and `username` arguments are defaulted to the standard Home Hub IP 
 
 See `./homehub-cli --help` for all options.
 
+## Docker image
+
+You can run the CLI within a Docker container:
+
+```
+docker run -ti --rm jamesnetherton/homehub-cli
+```
+
+To run a specific command:
+
+```
+docker run -ti --rm jamesnetherton/homehub-cli About --password=secret
+```
+
+If you need to override the hub url or username arguments, simply add them to 'docker run' command:
+
+```
+docker run -ti --rm jamesnetherton/homehub-cli About --huburl=http://192.168.1.254 --username=admin --password=secret
+```
+
 ## Troubleshooting
 
 ### Compatible firmware versions

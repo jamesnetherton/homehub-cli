@@ -1,4 +1,6 @@
 machine:
+  services:
+    - docker
   environment:
     GODIST: "go1.9.linux-amd64.tar.gz"
     PATH: "/usr/local/go/bin:/usr/local/go_workspace/bin:~/.go_workspace/bin:${PATH}"
@@ -25,3 +27,7 @@ deployment:
     branch: release
     commands:
       - cd ${PROJECT} && make release
+      - docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}
+      - docker push jamesnetherton/homehub-cli:latest
+      - docker push jamesnetherton/homehub-cli:$(cat ${PROJECT}/version.txt)
+      - docker logout

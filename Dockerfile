@@ -9,8 +9,10 @@ RUN cd src/github.com/jamesnetherton/homehub-cli && \
     make build && \
     cp build/homehub-cli /go/bin/homehub-cli
 
-
 FROM scratch
+
+# Avoid cli prompt displaying unknown@ by default
+ENV USER=docker
 
 COPY --from=compile /go/bin/homehub-cli /homehub-cli
 

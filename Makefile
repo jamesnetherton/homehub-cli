@@ -19,7 +19,12 @@ test: build
 	go test -v github.com/jamesnetherton/homehub-cli/cmd \
 	           github.com/jamesnetherton/homehub-cli/cli
 
-release: build
+docker:
+	docker build -t jamesnetherton/homehub-cli .
+	docker tag jamesnetherton/homehub-cli:latest jamesnetherton/homehub-cli:$(VERSION)
+
+release: docker
+	rm -rf build
 	rm -rf release && mkdir release
 	mkdir -p build/linux  && GOOS=linux  go build $(BUILDFLAGS) -o build/linux/$(NAME)
 	mkdir -p build/darwin && GOOS=darwin go build $(BUILDFLAGS) -o build/darwin/$(NAME)
