@@ -1,6 +1,7 @@
 package cmd
 
 import "strconv"
+import "github.com/chzyer/readline"
 
 // CommandContext encapsulates the state of a command execution lifecycle
 type CommandContext struct {
@@ -43,4 +44,25 @@ func (c *CommandContext) GetResult() interface{} {
 func (c *CommandContext) SetResult(result interface{}, err error) {
 	c.result = result
 	c.err = err
+}
+
+// ReadLine reads a line from the command CLI
+func (c *CommandContext) ReadLine(prompt string) (result string, err error) {
+	readLine, err := readline.New(prompt)
+	if err == nil {
+		defer readLine.Close()
+		return readLine.Readline()
+	}
+	return "", err
+}
+
+// ReadPassword reads a password string from the command CLI
+func (c *CommandContext) ReadPassword(prompt string) (result string, err error) {
+	readLine, err := readline.New(prompt)
+	if err == nil {
+		defer readLine.Close()
+		password, err := readLine.ReadPassword(prompt)
+		return string(password[:]), err
+	}
+	return "", err
 }

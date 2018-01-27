@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
 
-	"github.com/bgentry/speakeasy"
 	"github.com/jamesnetherton/homehub-cli/service"
 )
 
@@ -15,16 +16,29 @@ func NewLoginCommand() *GenericCommand {
 		Exec: func(context *CommandContext) {
 			hub := service.GetHub()
 			if hub == nil || !service.IsLoggedIn() {
-				var hubURL string
-				var userName string
+				hubURL, _ := context.ReadLine("Home Hub URL: ")
+				if len(strings.TrimSpace(hubURL)) == 0 {
+					fmt.Println("Hub URL must not be empty")
+					return
+				}
 
-				fmt.Print("Home hub URL: ")
-				fmt.Scan(&hubURL)
+				_, err := url.ParseRequestURI(hubURL)
+				if err != nil {
+					fmt.Println("Hub URL must be a valid URL")
+					return
+				}
 
-				fmt.Print("Home hub user: ")
-				fmt.Scan(&userName)
+				userName, _ := context.ReadLine("Home Hub user: ")
+				if len(strings.TrimSpace(userName)) == 0 {
+					fmt.Println("Hub user must not be empty")
+					return
+				}
 
-				password, _ := speakeasy.Ask(fmt.Sprint("Home Hub password: "))
+				password, _ := context.ReadPassword("Home Hub password: ")
+				if len(strings.TrimSpace(password)) == 0 {
+					fmt.Println("Hub password must not be empty")
+					return
+				}
 
 				service.NewHub(hubURL, userName, password)
 			}

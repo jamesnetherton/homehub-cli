@@ -1,8 +1,6 @@
-hash: 964c684b3738eb9fa6aef56edefd913102e9c4d05098a79036bfa8e3bda97007
-updated: 2017-12-30T19:59:17.199520051Z
+hash: 64db5d72a01fc0536b891b37b78518207e411d41c6653c5f5f0726427a2fb956
+updated: 2018-01-27T11:48:40.866191448Z
 imports:
-- name: github.com/bgentry/speakeasy
-  version: 675b82c74c0ed12283ee81ba8a534c8982c07b85
 - name: github.com/chzyer/readline
   version: 62c6fe6193755f722b8b8788aa7357be55a50ff1
 - name: github.com/jamesnetherton/homehub-client

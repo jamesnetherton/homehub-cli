@@ -2,6 +2,5 @@ package: github.com/jamesnetherton/homehub-cli
 import:
 - package: github.com/chzyer/readline
   version: ~1.4.0
-- package: github.com/bgentry/speakeasy
 - package: github.com/jamesnetherton/homehub-client
   version: ~0.7.0
