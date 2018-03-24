@@ -26,11 +26,16 @@ docker:
 release: docker
 	rm -rf build
 	rm -rf release && mkdir release
+
 	mkdir -p build/linux  && GOOS=linux  go build $(BUILDFLAGS) -o build/linux/$(NAME)
+	mkdir -p build/rpi32 && GOOS=linux GOARCH=arm go build $(BUILDFLAGS) -o build/rpi32/$(NAME)
+	mkdir -p build/rpi64 && GOOS=linux GOARCH=arm64 go build $(BUILDFLAGS) -o build/rpi64/$(NAME)
 	mkdir -p build/darwin && GOOS=darwin go build $(BUILDFLAGS) -o build/darwin/$(NAME)
 	mkdir -p build/windows && GOOS=windows go build $(BUILDFLAGS) -o build/windows/$(NAME).exe
 
 	tar -zcf release/$(NAME)-$(VERSION)-linux-$(ARCH).tar.gz -C build/linux $(NAME)
+	tar -zcf release/$(NAME)-$(VERSION)-linux-arm.tar.gz -C build/rpi32 $(NAME)
+	tar -zcf release/$(NAME)-$(VERSION)-linux-arm64.tar.gz -C build/rpi64 $(NAME)
 	tar -zcf release/$(NAME)-$(VERSION)-darwin-$(ARCH).tar.gz -C build/darwin $(NAME)
 	zip -j release/$(NAME)-$(VERSION)-windows-$(ARCH).zip build/windows/$(NAME).exe
 
