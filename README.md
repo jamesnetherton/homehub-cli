@@ -1,5 +1,8 @@
 # Home Hub CLI
 
+[![CircleCI](https://img.shields.io/circleci/project/jamesnetherton/homehub-cli/master.svg)](https://circleci.com/gh/jamesnetherton/homehub-cli/tree/master)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=600)](https://opensource.org/licenses/MIT)
+
 A CLI that can interact with BT Home Hub routers.
 
 [![asciicast](https://asciinema.org/a/4u35xe98mgj1lc7olrl1v0gie.png)](https://asciinema.org/a/4u35xe98mgj1lc7olrl1v0gie)
