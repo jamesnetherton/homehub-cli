@@ -32,7 +32,7 @@ type portMapping struct {
 	NatRule `json:"PortMapping,omitempty"`
 }
 
-func (n *NatRule) getUpdateActions() []action {
+func (n *NatRule) getUpdateActions(xpath string) []action {
 	var actions []action
 	r := reflect.TypeOf(n).Elem()
 	v := reflect.ValueOf(n).Elem()
@@ -47,7 +47,7 @@ func (n *NatRule) getUpdateActions() []action {
 			action := action{
 				ID:     id,
 				Method: methodSetValue,
-				XPath:  strings.Replace(accessControlPortForwardingUID, "#", strconv.Itoa(int(uid)), 1) + "/" + r.Field(i).Name,
+				XPath:  strings.Replace(xpath, "#", strconv.Itoa(int(uid)), 1) + "/" + r.Field(i).Name,
 				Parameters: &parameters{
 					Value: v.Field(i).Interface(),
 				},

@@ -9,7 +9,7 @@ type bandwidthMonitorRequest struct {
 	genericRequest
 }
 
-func newBandwidthMonitorRequest(authData *authData) (req *bandwidthMonitorRequest) {
+func newBandwidthMonitorRequest(authData *authData, xpath string) (req *bandwidthMonitorRequest) {
 	authData.requestCount++
 
 	// TODO: Enable dates to be configurable
@@ -23,7 +23,7 @@ func newBandwidthMonitorRequest(authData *authData) (req *bandwidthMonitorReques
 	a := action{
 		ID:         0,
 		Method:     methodUploadStatistics,
-		XPath:      bandwidthMonitoring,
+		XPath:      xpath,
 		Parameters: params,
 	}
 

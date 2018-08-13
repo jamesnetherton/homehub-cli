@@ -353,4 +353,6 @@ const (
 	gatewayConnectionStatusLocalipnetworkSubnetmask         string = "Device/Managers/NetworkData/NetmaskLan"
 	device                                                  string = "Device"
 	bandwidthMonitoring                                     string = "Device/Services/BandwidthMonitoring"
+	deviceFastLinesLineTestParamsDownstreamCurrRate         string = "Device/FAST/Lines/Line[@uid=\"1\"]/TestParams/DownstreamCurrRate"
+	deviceFastLinesLineTestParamsUpstreamCurrRate           string = "Device/FAST/Lines/Line[@uid=\"1\"]/TestParams/UpstreamCurrRate"
 )

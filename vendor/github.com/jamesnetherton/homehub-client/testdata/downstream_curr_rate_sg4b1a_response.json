@@ -1,0 +1,44 @@
+{
+  "reply": {
+    "actions": [
+      {
+        "callbacks": [
+          {
+            "xpath": "Device/FAST/Lines/Line[@uid=1]/TestParams/DownstreamCurrRate",
+            "parameters": {
+              "value": 317796,
+              "capability": {
+                "name": "DownstreamCurrRate",
+                "description": "TBD",
+                "type": "xmo:uint32 xmo:number xmo:value",
+                "flags": {
+                  "value": true,
+                  "statistic": true,
+                  "xml-child": true
+                }
+              }
+            },
+            "result": {
+              "code": 1.6777238e+07,
+              "description": "Applied"
+            },
+            "uid": 1
+          }
+        ],
+        "error": {
+          "code": 1.6777238e+07,
+          "description": "Applied"
+        },
+        "id": 0,
+        "uid": 1
+      }
+    ],
+    "error": {
+      "code": 1.6777216e+07,
+      "description": "Ok"
+    },
+    "events": [],
+    "id": 1,
+    "uid": 0
+  }
+}

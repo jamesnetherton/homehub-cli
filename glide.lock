@@ -1,8 +1,8 @@
-hash: 64db5d72a01fc0536b891b37b78518207e411d41c6653c5f5f0726427a2fb956
-updated: 2018-01-27T11:48:40.866191448Z
+hash: b4dd2421f3ad888feb199f159112dc2a811f23c1a72d5beaa87d6340f2e976c3
+updated: 2018-08-13T17:01:32.327665051+01:00
 imports:
 - name: github.com/chzyer/readline
   version: 62c6fe6193755f722b8b8788aa7357be55a50ff1
 - name: github.com/jamesnetherton/homehub-client
-  version: aca6662995d3496e2b52024385256cd786070a16
+  version: ab12e1dd2d2e8cc81a77a4ae4223ae1612ec0c56
 testImports: []

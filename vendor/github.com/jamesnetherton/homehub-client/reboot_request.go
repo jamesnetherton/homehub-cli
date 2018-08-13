@@ -4,7 +4,7 @@ type rebootRequest struct {
 	genericRequest
 }
 
-func newRebootRequest(authData *authData) (req *rebootRequest) {
+func newRebootRequest(authData *authData, xpath string) (req *rebootRequest) {
 	authData.requestCount++
 
 	params := &parameters{
@@ -14,7 +14,7 @@ func newRebootRequest(authData *authData) (req *rebootRequest) {
 	a := action{
 		ID:         0,
 		Method:     methodReboot,
-		XPath:      device,
+		XPath:      xpath,
 		Parameters: params,
 	}
 

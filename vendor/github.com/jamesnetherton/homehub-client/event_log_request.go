@@ -4,7 +4,7 @@ type eventLogRequest struct {
 	genericRequest
 }
 
-func newEventLogRequest(authData *authData) (req *eventLogRequest) {
+func newEventLogRequest(authData *authData, xpath string) (req *eventLogRequest) {
 	authData.requestCount++
 
 	params := &parameters{
@@ -14,7 +14,7 @@ func newEventLogRequest(authData *authData) (req *eventLogRequest) {
 	a := action{
 		ID:         0,
 		Method:     methodVendorLogDownload,
-		XPath:      eventLog,
+		XPath:      xpath,
 		Parameters: params,
 	}
 

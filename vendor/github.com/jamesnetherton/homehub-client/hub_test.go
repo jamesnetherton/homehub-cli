@@ -106,18 +106,23 @@ func proxiedResponseHTTPHandler(apiStubResponse string, url string, w http.Respo
 	fmt.Fprintln(w, body)
 }
 
-func mockAPIClientServer(apiStubResponse string) (*httptest.Server, *Hub) {
+func mockAPIClientServer(apiStubResponse ...string) (*httptest.Server, *Hub) {
 	defaultUsername := "admin"
 	defaultPassword := "passw0rd"
 	username := getEnv("HUB_USERNAME", defaultUsername)
 	password := getEnv("HUB_PASSWORD", defaultPassword)
 	debug := getEnv("HUB_DEBUG", "false")
+	requestCount := -1
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.RequestURI == "/cgi/json-req" {
+			requestCount++
+		}
+
 		if username == defaultUsername && password == defaultPassword {
-			stubbedResponseHTTPHandler(apiStubResponse, w, r)
+			stubbedResponseHTTPHandler(apiStubResponse[requestCount], w, r)
 		} else {
-			proxiedResponseHTTPHandler(apiStubResponse, os.Getenv("HUB_URL"), w, r)
+			proxiedResponseHTTPHandler(apiStubResponse[requestCount], os.Getenv("HUB_URL"), w, r)
 		}
 	}))
 
@@ -373,6 +378,31 @@ func TestDownstreamSyncSpeed(t *testing.T) {
 	})
 }
 
+func TestDownstreamSyncSpeedSg4b1a(t *testing.T) {
+	server, hub := mockAPIClientServer("login", "maintenance_firmware_version_sg4b1a", "downstream_curr_rate_sg4b1a")
+	defer server.Close()
+
+	loggedIn, err := hub.Login()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !loggedIn {
+		t.Errorf("Expected login to be successful")
+	}
+
+	downstreamRate, err := hub.DownstreamSyncSpeed()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if downstreamRate != 317796 {
+		t.Fatalf("Expected downstream rate to be 317796 but was %d", downstreamRate)
+	}
+}
+
 func TestEventLog(t *testing.T) {
 	server, hub := mockAPIClientServer("event_log")
 	defer server.Close()
@@ -477,7 +507,7 @@ func TestLightStatus(t *testing.T) {
 }
 
 func TestLoginSuccess(t *testing.T) {
-	server, hub := mockAPIClientServer("login")
+	server, hub := mockAPIClientServer("login", "maintenance_firmware_version")
 	defer server.Close()
 
 	loggedIn, err := hub.Login()
@@ -821,6 +851,31 @@ func TestUpstreamSyncSpeed(t *testing.T) {
 		expectedResult:  52121,
 		t:               t,
 	})
+}
+
+func TestUpstreamSyncSpeedSg4b1a(t *testing.T) {
+	server, hub := mockAPIClientServer("login", "maintenance_firmware_version_sg4b1a", "upstream_curr_rate_sg4b1a")
+	defer server.Close()
+
+	loggedIn, err := hub.Login()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !loggedIn {
+		t.Errorf("Expected login to be successful")
+	}
+
+	upstreamRate, err := hub.UpstreamSyncSpeed()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	if upstreamRate != 52121 {
+		t.Fatalf("Expected upstream rate to be 52121 but was %d", upstreamRate)
+	}
 }
 
 func TestVersion(t *testing.T) {
