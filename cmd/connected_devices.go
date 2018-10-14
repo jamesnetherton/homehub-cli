@@ -26,7 +26,7 @@ func NewConnectedDevicesCommand(authenticatingCommand *GenericCommand) *Authenti
 					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
 
 					for i := 0; i < len(connectedDevices); i++ {
-						if connectedDevices[i].InterfaceType == "WiFI" || connectedDevices[i].InterfaceType == "Ethernet" {
+						if connectedDevices[i].InterfaceType == "WiFi" || connectedDevices[i].InterfaceType == "Ethernet" {
 							fmt.Printf(dataPattern,
 								connectedDevices[i].UID,
 								connectedDevices[i].IPAddress,
