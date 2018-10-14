@@ -37,13 +37,14 @@ func (c *CLI) Run() {
 
 	for {
 		line, err := c.readline.Readline()
+		line = strings.TrimSpace(line)
+
 		if err == readline.ErrInterrupt {
 			continue
-		} else if err == io.EOF {
+		} else if err == io.EOF || line == "exit" {
 			break
 		}
 
-		line = strings.TrimSpace(line)
 		if !service.StringIsEmpty(line) {
 			commandLine := strings.Split(line, " ")
 			commandName := commandLine[0]
