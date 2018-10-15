@@ -16,14 +16,14 @@ func NewConnectedDevicesCommand(authenticatingCommand *GenericCommand) *Authenti
 			Exec:        func(context *CommandContext) { context.SetResult(service.GetHub().ConnectedDevices()) },
 			PostExec: func(context *CommandContext) {
 				if !context.IsError() {
-					headerPattern := "%-5s%-20s%-25s%-7s\n"
-					dataPattern := "%-5d%-20s%-25s%-7s\n"
+					headerPattern := "%-5s%-20s%-25s%-20s%-5s\n"
+					dataPattern := "%-5d%-20s%-25s%-20s%-5s\n"
 					connectedDevices := context.GetResult().([]homehub.DeviceDetail)
 
 					fmt.Print("\n")
-					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
-					fmt.Printf(headerPattern, "ID", "IP Address", "Physical Address", "Type")
-					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
+					fmt.Printf(headerPattern, "--", "----------", "----------------", "----", "------")
+					fmt.Printf(headerPattern, "ID", "IP Address", "Physical Address", "Type", "Active")
+					fmt.Printf(headerPattern, "--", "----------", "----------------", "----", "------")
 
 					for i := 0; i < len(connectedDevices); i++ {
 						if connectedDevices[i].InterfaceType == "WiFi" || connectedDevices[i].InterfaceType == "Ethernet" {
@@ -32,6 +32,7 @@ func NewConnectedDevicesCommand(authenticatingCommand *GenericCommand) *Authenti
 								connectedDevices[i].IPAddress,
 								connectedDevices[i].PhysicalAddress,
 								connectedDevices[i].InterfaceType,
+								humanizeBool(connectedDevices[i].Active),
 							)
 						}
 					}
