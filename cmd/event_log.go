@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jamesnetherton/homehub-cli/service"
+	"github.com/jamesnetherton/homehub-cli/util"
 	homehub "github.com/jamesnetherton/homehub-client"
 )
 
@@ -16,24 +17,20 @@ func NewEventLogCommand(authenticatingCommand *GenericCommand) *AuthenticationRe
 			Exec:        func(context *CommandContext) { context.SetResult(service.GetHub().EventLog()) },
 			PostExec: func(context *CommandContext) {
 				if !context.IsError() {
-					headerPattern := "%-30s%-20s%-25s%-7s\n"
-					dataPattern := "%-30s%-20s%-25s%-7s\n"
 					eventLog := context.GetResult().(*homehub.EventLog)
 					eventLogEntries := eventLog.Entries
 
-					fmt.Print("\n")
-					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
-					fmt.Printf(headerPattern, "Time", "Type", "Category", "Message")
-					fmt.Printf(headerPattern, "--", "----------", "----------------", "----")
+					data := []string{
+						"Time | Type | Category | Message",
+						"",
+					}
 
 					for i := 0; i < len(eventLogEntries); i++ {
-						fmt.Printf(dataPattern,
-							eventLogEntries[i].Timestamp,
-							eventLogEntries[i].Type,
-							eventLogEntries[i].Category,
-							eventLogEntries[i].Message,
-						)
+						line := fmt.Sprintf("%s | %s | %s | %s", eventLogEntries[i].Timestamp, eventLogEntries[i].Type, eventLogEntries[i].Category, eventLogEntries[i].Message)
+						data = append(data, line)
 					}
+
+					util.Columnize(data)
 				}
 			},
 		},

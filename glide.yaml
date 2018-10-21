@@ -6,3 +6,4 @@ import:
   version: ~0.9.0
 - package: github.com/golang/mock
   version: ~v1.1.1
+- package: github.com/ryanuber/columnize

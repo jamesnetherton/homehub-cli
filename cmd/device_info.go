@@ -28,22 +28,17 @@ func NewDeviceInfoCommand(authenticatingCommand *GenericCommand) *Authentication
 			},
 			PostExec: func(context *CommandContext) {
 				if !context.IsError() {
-					headerPattern := "%-5s%-20s%-25s%-20s%-5s\n"
-					dataPattern := "%-5d%-20s%-25s%-20s%-5s\n"
 					device := context.GetResult().(*homehub.DeviceDetail)
 
-					fmt.Print("\n")
-					fmt.Printf(headerPattern, "--", "----------", "----------------", "----", "------")
-					fmt.Printf(headerPattern, "ID", "IP Address", "Physical Address", "Type", "Active")
-					fmt.Printf(headerPattern, "--", "----------", "----------------", "----", "------")
+					data := []string{
+						"ID | IP Address | Physical Address | Type | Active",
+						"",
+					}
 
-					fmt.Printf(dataPattern,
-						device.UID,
-						device.IPAddress,
-						device.PhysicalAddress,
-						device.InterfaceType,
-						util.HumanizeBool(device.Active),
-					)
+					line := fmt.Sprintf("%d | %s | %s | %s | %s", device.UID, device.IPAddress, device.PhysicalAddress, device.InterfaceType, util.HumanizeBool(device.Active))
+					data = append(data, line)
+
+					util.Columnize(data)
 				}
 			}},
 		AuthenticatingCommand: authenticatingCommand,
