@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jamesnetherton/homehub-cli/service"
+	"github.com/jamesnetherton/homehub-cli/util"
 	homehub "github.com/jamesnetherton/homehub-client"
 )
 
@@ -21,6 +22,7 @@ func NewDeviceInfoCommand(authenticatingCommand *GenericCommand) *Authentication
 				if err != nil {
 					parseErr := errors.New("Device ID must be a numeric value")
 					context.SetResult(nil, parseErr)
+					return
 				}
 				context.SetResult(service.GetHub().DeviceInfo(id))
 			},
@@ -40,7 +42,7 @@ func NewDeviceInfoCommand(authenticatingCommand *GenericCommand) *Authentication
 						device.IPAddress,
 						device.PhysicalAddress,
 						device.InterfaceType,
-						humanizeBool(device.Active),
+						util.HumanizeBool(device.Active),
 					)
 				}
 			}},

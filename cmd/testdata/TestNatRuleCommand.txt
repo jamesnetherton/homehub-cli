@@ -1,0 +1,14 @@
+
+ID                       12345
+Description              Test NAT rule            
+Alias                                             
+Creator                  USER                     
+Enabled                  true           
+Service                  NONE                     
+External Port Start      1111                     
+External Port End        2222                     
+External IP                                       
+Internal Port Start      3333                     
+Internal Port End        2222                     
+Internal IP              192.168.1.100            
+Protocol                 TCP       

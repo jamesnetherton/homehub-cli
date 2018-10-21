@@ -26,7 +26,7 @@ func NewRebootCommand(authenticatingCommand *GenericCommand) *AuthenticationRequ
 				attempts := 0
 				for {
 					attempts++
-					response, err := http.Get(service.GetHub().URL)
+					response, err := http.Get(service.GetHubURL())
 					if err != nil || response.StatusCode != 200 {
 						if attempts == 25 {
 							fmt.Println("\nGave up waiting for Home Hub to become available")

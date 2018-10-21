@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jamesnetherton/homehub-cli/service"
 )
@@ -23,6 +24,16 @@ func NewLightEnableCommand(authenticatingCommand *GenericCommand) *Authenticatio
 				}
 
 				context.SetResult(nil, service.GetHub().LightEnable(enable))
+			},
+			PostExec: func(context *CommandContext) {
+				enabled, _ := context.GetBooleanArg(0)
+				if !context.IsError() {
+					status := "disabled"
+					if enabled {
+						status = "enabled"
+					}
+					fmt.Printf("Light successfully %s\n", status)
+				}
 			},
 		},
 		AuthenticatingCommand: authenticatingCommand,

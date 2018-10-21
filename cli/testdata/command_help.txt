@@ -1,0 +1,3 @@
+EnableDebug: Enables debug logging of HTTP requests
+
+Usage: EnableDebug enable <bool> 

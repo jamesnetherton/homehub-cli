@@ -36,6 +36,11 @@ func santizeString(target *string, regex string, replacement string) {
 	}
 }
 
+func newHubClient(URL string, username string, password string) *HubClient {
+	c := newClient(URL+"/cgi/json-req", username, password)
+	return &HubClient{c, URL, &firmwareSG4B1{}}
+}
+
 func stubbedResponseHTTPHandler(apiStubResponse string, w http.ResponseWriter, r *http.Request) {
 	var stubDataFile string
 	if strings.HasSuffix(r.RequestURI, "/eventLog") {
@@ -106,7 +111,7 @@ func proxiedResponseHTTPHandler(apiStubResponse string, url string, w http.Respo
 	fmt.Fprintln(w, body)
 }
 
-func mockAPIClientServer(apiStubResponse ...string) (*httptest.Server, *Hub) {
+func mockAPIClientServer(apiStubResponse ...string) (*httptest.Server, Hub) {
 	defaultUsername := "admin"
 	defaultPassword := "passw0rd"
 	username := getEnv("HUB_USERNAME", defaultUsername)
@@ -127,7 +132,7 @@ func mockAPIClientServer(apiStubResponse ...string) (*httptest.Server, *Hub) {
 	}))
 
 	url := getEnv("HUB_URL", server.URL)
-	hub := New(server.URL, username, password)
+	hub := newHubClient(server.URL, username, password)
 
 	if debug == "true" {
 		hub.EnableDebug(true)

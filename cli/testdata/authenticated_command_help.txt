@@ -1,0 +1,3 @@
+BandwidthMonitor: Displays bandwidth statistics for devices that have connected to the Home Hub
+
+Usage: BandwidthMonitor 

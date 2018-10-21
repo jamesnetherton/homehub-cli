@@ -8,21 +8,69 @@ import (
 
 var debug debugging
 
-// Hub represents a Home Hub client for interacting with the router
-type Hub struct {
+// Hub defines an interface for a Home Hub client
+type Hub interface {
+	BandwidthMonitor() (result *BandwidthLog, err error)
+	BroadbandProductType() (result string, err error)
+	ConnectedDevices() (result []DeviceDetail, err error)
+	DataPumpVersion() (result string, err error)
+	DataReceived() (result int64, err error)
+	DataSent() (result int64, err error)
+	DeviceInfo(id int) (result *DeviceDetail, err error)
+	DhcpAuthoritative() (result bool, err error)
+	DhcpPoolStart() (result string, err error)
+	DhcpPoolEnd() (result string, err error)
+	DhcpSubnetMask() (result string, err error)
+	DownstreamSyncSpeed() (result int, err error)
+	EnableDebug(enable bool)
+	EnableDhcpAuthoritative(enable bool) (err error)
+	EventLog() (result *EventLog, err error)
+	HardwareVersion() (result string, err error)
+	InternetConnectionStatus() (result string, err error)
+	LightBrightness() (result int, err error)
+	LightBrightnessSet(brightness int) (err error)
+	LightEnable(enable bool) (err error)
+	LightStatus() (result string, err error)
+	LocalTime() (result string, err error)
+	Login() (success bool, err error)
+	MaintenanceFirmwareVersion() (result string, err error)
+	NatRules() (result []NatRule, err error)
+	NatRule(id int) (result *NatRule, err error)
+	NatRuleCreate(natRule *NatRule) (err error)
+	NatRuleDelete(id int) (err error)
+	NatRuleUpdate(natRule NatRule) (err error)
+	PublicIPAddress() (result string, err error)
+	PublicSubnetMask() (result string, err error)
+	Reboot() (err error)
+	SambaIP() (result string, err error)
+	SambaHost() (result string, err error)
+	SerialNumber() (result string, err error)
+	SoftwareVersion() (result string, err error)
+	UpstreamSyncSpeed() (result int, err error)
+	Version() (result string, err error)
+	WiFiFrequency24Ghz() (result *WiFiFrequency, err error)
+	WiFiFrequency24GhzChannelSet(channel int) (err error)
+	WiFiFrequency5Ghz() (result *WiFiFrequency, err error)
+	WiFiFrequency5GhzChannelSet(channel int) (err error)
+	WiFiSecurityMode() (result string, err error)
+	WiFiSSID() (result string, err error)
+}
+
+// HubClient represents a Home Hub client for interacting with the router
+type HubClient struct {
 	client   *client
-	URL      string
+	url      string
 	firmware firmware
 }
 
 // New creates a new Hub client for interacting with the router
-func New(URL string, username string, password string) *Hub {
+func New(URL string, username string, password string) Hub {
 	c := newClient(URL+"/cgi/json-req", username, password)
-	return &Hub{c, URL, &firmwareSG4B1{}}
+	return &HubClient{c, URL, &firmwareSG4B1{}}
 }
 
 // BandwidthMonitor returns bandwidth statistics for devices that have connected to the router
-func (h *Hub) BandwidthMonitor() (result *BandwidthLog, err error) {
+func (h *HubClient) BandwidthMonitor() (result *BandwidthLog, err error) {
 	stats, err := h.client.getBandwidthUsage(h.firmware.bandwidthMonitorXPath())
 
 	if err != nil {
@@ -42,7 +90,7 @@ func (h *Hub) BandwidthMonitor() (result *BandwidthLog, err error) {
 }
 
 // BroadbandProductType returns the last used wan interface type. For BT this equates to the broadband product type
-func (h *Hub) BroadbandProductType() (result string, err error) {
+func (h *HubClient) BroadbandProductType() (result string, err error) {
 	i, err := h.client.getXPathValueString(h.firmware.broadbandProductTypeXPath())
 
 	if err != nil {
@@ -58,7 +106,7 @@ func (h *Hub) BroadbandProductType() (result string, err error) {
 }
 
 // ConnectedDevices returns information about any devices connected to the router
-func (h *Hub) ConnectedDevices() (result []DeviceDetail, err error) {
+func (h *HubClient) ConnectedDevices() (result []DeviceDetail, err error) {
 	var d []DeviceDetail
 	devices, err := h.client.getXPathValues(h.firmware.connectedDevicesXPath(), reflect.TypeOf(d))
 
@@ -74,22 +122,22 @@ func (h *Hub) ConnectedDevices() (result []DeviceDetail, err error) {
 }
 
 // DataPumpVersion returns the DSL line firmware version
-func (h *Hub) DataPumpVersion() (result string, err error) {
+func (h *HubClient) DataPumpVersion() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.dataPumpVersionXPath())
 }
 
 // DataReceived returns the the total data bytes received
-func (h *Hub) DataReceived() (result int64, err error) {
+func (h *HubClient) DataReceived() (result int64, err error) {
 	return h.client.getXPathValueInt64(h.firmware.dataReceivedXPath())
 }
 
 // DataSent returns the total data bytes sent
-func (h *Hub) DataSent() (result int64, err error) {
+func (h *HubClient) DataSent() (result int64, err error) {
 	return h.client.getXPathValueInt64(h.firmware.dataSentXPath())
 }
 
 // DeviceInfo returns infomation about a device matching the specified id
-func (h *Hub) DeviceInfo(id int) (result *DeviceDetail, err error) {
+func (h *HubClient) DeviceInfo(id int) (result *DeviceDetail, err error) {
 	var hostType host
 	valueType, err := h.client.getXPathValueType(strings.Replace(h.firmware.deviceInfoXPath(), "#", strconv.Itoa(id), 1), reflect.TypeOf(hostType))
 
@@ -101,32 +149,32 @@ func (h *Hub) DeviceInfo(id int) (result *DeviceDetail, err error) {
 }
 
 // DhcpAuthoritative returns whether the hub is the authoritive DHCP server
-func (h *Hub) DhcpAuthoritative() (result bool, err error) {
+func (h *HubClient) DhcpAuthoritative() (result bool, err error) {
 	return h.client.getXPathValueBool(h.firmware.dhcpAuthoritativeXPath())
 }
 
 // DhcpPoolStart returns DHCP pool start IP adress
-func (h *Hub) DhcpPoolStart() (result string, err error) {
+func (h *HubClient) DhcpPoolStart() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.dhcpPoolStartXPath())
 }
 
 // DhcpPoolEnd returns DHCP pool end IP adress
-func (h *Hub) DhcpPoolEnd() (result string, err error) {
+func (h *HubClient) DhcpPoolEnd() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.dhcpPoolEndXPath())
 }
 
 // DhcpSubnetMask returns DHCP subnet mask
-func (h *Hub) DhcpSubnetMask() (result string, err error) {
+func (h *HubClient) DhcpSubnetMask() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.dhcpSubnetMaskXPath())
 }
 
 // DownstreamSyncSpeed returns the speed at which the router is downloading data
-func (h *Hub) DownstreamSyncSpeed() (result int, err error) {
+func (h *HubClient) DownstreamSyncSpeed() (result int, err error) {
 	return h.client.getXPathValueInt(h.firmware.downstreamSyncSpeedXPath())
 }
 
 // EnableDebug causes HTTP client request and responses to be output to the console
-func (h *Hub) EnableDebug(enable bool) {
+func (h *HubClient) EnableDebug(enable bool) {
 	if enable {
 		debug = true
 	} else {
@@ -135,12 +183,12 @@ func (h *Hub) EnableDebug(enable bool) {
 }
 
 // EnableDhcpAuthoritative toggles whether the hub is the authoritive DHCP server
-func (h *Hub) EnableDhcpAuthoritative(enable bool) (err error) {
+func (h *HubClient) EnableDhcpAuthoritative(enable bool) (err error) {
 	return h.client.setXPathValue(h.firmware.dhcpAuthoritativeXPath(), enable)
 }
 
 // EventLog returns the events that have taken place on the router since it was last reset
-func (h *Hub) EventLog() (result *EventLog, err error) {
+func (h *HubClient) EventLog() (result *EventLog, err error) {
 	e, err := h.client.getEventLog(h.firmware.eventLogXPath())
 
 	if err != nil {
@@ -160,27 +208,27 @@ func (h *Hub) EventLog() (result *EventLog, err error) {
 }
 
 // HardwareVersion returns the router hardware version
-func (h *Hub) HardwareVersion() (result string, err error) {
+func (h *HubClient) HardwareVersion() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.hardwareVersionXPath())
 }
 
 // InternetConnectionStatus returns the internet connection status
-func (h *Hub) InternetConnectionStatus() (result string, err error) {
+func (h *HubClient) InternetConnectionStatus() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.internetConnectionStatusXPath())
 }
 
 // LightBrightness returns the router LED brightness percentage
-func (h *Hub) LightBrightness() (result int, err error) {
+func (h *HubClient) LightBrightness() (result int, err error) {
 	return h.client.getXPathValueInt(h.firmware.lightBrightnessXPath())
 }
 
 // LightBrightnessSet sets the router LED brightness percentage
-func (h *Hub) LightBrightnessSet(brightness int) (err error) {
+func (h *HubClient) LightBrightnessSet(brightness int) (err error) {
 	return h.client.setXPathValue(h.firmware.lightBrightnessXPath(), brightness)
 }
 
 // LightEnable toggles the status of the router LED lights
-func (h *Hub) LightEnable(enable bool) (err error) {
+func (h *HubClient) LightEnable(enable bool) (err error) {
 	status := "ON"
 	if enable == false {
 		status = "OFF"
@@ -189,17 +237,17 @@ func (h *Hub) LightEnable(enable bool) (err error) {
 }
 
 // LightStatus returns the router LED light satus
-func (h *Hub) LightStatus() (result string, err error) {
+func (h *HubClient) LightStatus() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.lightStatusXPath())
 }
 
 // LocalTime returns the local time from the router NTP server
-func (h *Hub) LocalTime() (result string, err error) {
+func (h *HubClient) LocalTime() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.localTimeXPath())
 }
 
 // Login authenticates a user
-func (h *Hub) Login() (success bool, err error) {
+func (h *HubClient) Login() (success bool, err error) {
 	err = h.client.login()
 
 	if err == nil {
@@ -220,12 +268,12 @@ func (h *Hub) Login() (success bool, err error) {
 }
 
 // MaintenanceFirmwareVersion returns the maintenance firmware version
-func (h *Hub) MaintenanceFirmwareVersion() (result string, err error) {
+func (h *HubClient) MaintenanceFirmwareVersion() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.maintenanceFirmwareVersionXPath())
 }
 
 // NatRules returns IPV4 firewall NAT rules
-func (h *Hub) NatRules() (result []NatRule, err error) {
+func (h *HubClient) NatRules() (result []NatRule, err error) {
 	var r []NatRule
 	natRules, err := h.client.getXPathValues(h.firmware.natRulesXPath(), reflect.TypeOf(r))
 
@@ -241,7 +289,7 @@ func (h *Hub) NatRules() (result []NatRule, err error) {
 }
 
 // NatRule returns an IPV4 firewall NAT rule matching the specified id
-func (h *Hub) NatRule(id int) (result *NatRule, err error) {
+func (h *HubClient) NatRule(id int) (result *NatRule, err error) {
 	var portMappingType portMapping
 	valueType, err := h.client.getXPathValueType(strings.Replace(h.firmware.natRuleXPath(), "#", strconv.Itoa(id), 1), reflect.TypeOf(portMappingType))
 
@@ -253,7 +301,7 @@ func (h *Hub) NatRule(id int) (result *NatRule, err error) {
 }
 
 // NatRuleCreate creates an IPV4 firewall NAT rule
-func (h *Hub) NatRuleCreate(natRule *NatRule) (err error) {
+func (h *HubClient) NatRuleCreate(natRule *NatRule) (err error) {
 	uid, err := h.client.addChildXPathValue(h.firmware.natRuleCreateXPath(), &portMapping{NatRule: *natRule})
 
 	if err == nil {
@@ -265,62 +313,62 @@ func (h *Hub) NatRuleCreate(natRule *NatRule) (err error) {
 }
 
 // NatRuleDelete deletes an IPV4 firewall NAT rule
-func (h *Hub) NatRuleDelete(id int) (err error) {
+func (h *HubClient) NatRuleDelete(id int) (err error) {
 	return h.client.deleteChildXPathValue(strings.Replace(h.firmware.natRuleXPath(), "#", strconv.Itoa(id), 1))
 }
 
 // NatRuleUpdate updates an existing IPV4 firewall NAT rule
-func (h *Hub) NatRuleUpdate(natRule NatRule) (err error) {
+func (h *HubClient) NatRuleUpdate(natRule NatRule) (err error) {
 	return h.client.setXPathValues(natRule.getUpdateActions(h.firmware.natRuleXPath()))
 }
 
 // PublicIPAddress returns the router public IP address
-func (h *Hub) PublicIPAddress() (result string, err error) {
+func (h *HubClient) PublicIPAddress() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.publicIPAddressXPath())
 }
 
 // PublicSubnetMask returns the router public subnet mask
-func (h *Hub) PublicSubnetMask() (result string, err error) {
+func (h *HubClient) PublicSubnetMask() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.publicSubnetMaskXPath())
 }
 
 // Reboot restarts the router
-func (h *Hub) Reboot() (err error) {
+func (h *HubClient) Reboot() (err error) {
 	return h.client.doReboot(h.firmware.rebootXPath())
 }
 
 // SambaIP returns the samba share IP address
-func (h *Hub) SambaIP() (result string, err error) {
+func (h *HubClient) SambaIP() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.sambaIPXPath())
 }
 
 // SambaHost returns a comma delimited list of samba host names
-func (h *Hub) SambaHost() (result string, err error) {
+func (h *HubClient) SambaHost() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.sambaHostXPath())
 }
 
 // SerialNumber returns the router serial number
-func (h *Hub) SerialNumber() (result string, err error) {
+func (h *HubClient) SerialNumber() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.serialNumberXPath())
 }
 
 // SoftwareVersion returns the router software version
-func (h *Hub) SoftwareVersion() (result string, err error) {
+func (h *HubClient) SoftwareVersion() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.softwareVersionXPath())
 }
 
 // UpstreamSyncSpeed returns the speed at which the router is uploading data
-func (h *Hub) UpstreamSyncSpeed() (result int, err error) {
+func (h *HubClient) UpstreamSyncSpeed() (result int, err error) {
 	return h.client.getXPathValueInt(h.firmware.upstreamSyncSpeedXPath())
 }
 
 // Version returns the router version
-func (h *Hub) Version() (result string, err error) {
+func (h *HubClient) Version() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.versionXPath())
 }
 
 // WiFiFrequency24Ghz returns information about the WiFI 2.4GHz frequency
-func (h *Hub) WiFiFrequency24Ghz() (result *WiFiFrequency, err error) {
+func (h *HubClient) WiFiFrequency24Ghz() (result *WiFiFrequency, err error) {
 	var radioType radio
 	valueType, err := h.client.getXPathValueType(h.firmware.wiFiFrequency24GhzXPath(), reflect.TypeOf(radioType))
 
@@ -332,12 +380,12 @@ func (h *Hub) WiFiFrequency24Ghz() (result *WiFiFrequency, err error) {
 }
 
 // WiFiFrequency24GhzChannelSet sets the operating channel for the 2.4Ghz frequency
-func (h *Hub) WiFiFrequency24GhzChannelSet(channel int) (err error) {
+func (h *HubClient) WiFiFrequency24GhzChannelSet(channel int) (err error) {
 	return h.client.setXPathValue(h.firmware.wiFiFrequency24GhzChannelSetXPath(), channel)
 }
 
 // WiFiFrequency5Ghz returns information about the WiFI 5GHz frequency
-func (h *Hub) WiFiFrequency5Ghz() (result *WiFiFrequency, err error) {
+func (h *HubClient) WiFiFrequency5Ghz() (result *WiFiFrequency, err error) {
 	var radioType radio
 	valueType, err := h.client.getXPathValueType(h.firmware.wiFiFrequency5GhzXPath(), reflect.TypeOf(radioType))
 
@@ -349,16 +397,16 @@ func (h *Hub) WiFiFrequency5Ghz() (result *WiFiFrequency, err error) {
 }
 
 // WiFiFrequency5GhzChannelSet sets the operating channel for the 5Ghz frequency
-func (h *Hub) WiFiFrequency5GhzChannelSet(channel int) (err error) {
+func (h *HubClient) WiFiFrequency5GhzChannelSet(channel int) (err error) {
 	return h.client.setXPathValue(h.firmware.wiFiFrequency5GhzChannelSetXPath(), channel)
 }
 
 // WiFiSecurityMode returns the WiFi security mode in use
-func (h *Hub) WiFiSecurityMode() (result string, err error) {
+func (h *HubClient) WiFiSecurityMode() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.wiFiSecurityModeXPath())
 }
 
 // WiFiSSID returns the WiFi service set identifier
-func (h *Hub) WiFiSSID() (result string, err error) {
+func (h *HubClient) WiFiSSID() (result string, err error) {
 	return h.client.getXPathValueString(h.firmware.wiFiSSIDXPath())
 }

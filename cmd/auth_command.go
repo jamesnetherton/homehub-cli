@@ -23,6 +23,11 @@ func (c *AuthenticationRequiringCommand) ExecuteLifecylce(args []string) {
 	if (!helpRequested(context)) && (hub == nil || !service.IsLoggedIn()) {
 		fmt.Printf("\nYou are not logged in. Please login...\n\n")
 		c.AuthenticatingCommand.Execute(context)
+
+		if context.GetResult() == nil {
+			return
+		}
+
 		if context.IsError() || !context.GetResult().(bool) {
 			fmt.Println("Login failed")
 			return

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jamesnetherton/homehub-cli/service"
+	"github.com/jamesnetherton/homehub-cli/util"
 	homehub "github.com/jamesnetherton/homehub-client"
 )
 
@@ -32,7 +33,7 @@ func NewConnectedDevicesCommand(authenticatingCommand *GenericCommand) *Authenti
 								connectedDevices[i].IPAddress,
 								connectedDevices[i].PhysicalAddress,
 								connectedDevices[i].InterfaceType,
-								humanizeBool(connectedDevices[i].Active),
+								util.HumanizeBool(connectedDevices[i].Active),
 							)
 						}
 					}

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jamesnetherton/homehub-cli/service"
 )
@@ -23,6 +24,11 @@ func NewLightBrightnessSetCommand(authenticatingCommand *GenericCommand) *Authen
 				}
 
 				context.SetResult(nil, service.GetHub().LightBrightnessSet(brightness))
+			},
+			PostExec: func(context *CommandContext) {
+				if !context.IsError() {
+					fmt.Printf("Light brightness successfully updated\n")
+				}
 			},
 		},
 		AuthenticatingCommand: authenticatingCommand,

@@ -1,0 +1,9 @@
+
+ID                       12345
+Alias                    RADIO24G                 
+Enabled                  true                     
+Status                   UP                       
+Channel                  54321          
+Available Channels       1,2,3,4                  
+Operating Standards      a,n                      
+Supported Standards      a,n                      

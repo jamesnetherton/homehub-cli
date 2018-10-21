@@ -8,7 +8,7 @@ import (
 
 	"github.com/chzyer/readline"
 	"github.com/jamesnetherton/homehub-cli/cmd"
-	"github.com/jamesnetherton/homehub-cli/service"
+	"github.com/jamesnetherton/homehub-cli/util"
 )
 
 // CLI is a representation of the home hub command line interface
@@ -45,7 +45,7 @@ func (c *CLI) Run() {
 			break
 		}
 
-		if !service.StringIsEmpty(line) {
+		if !util.StringIsEmpty(line) {
 			commandLine := strings.Split(line, " ")
 			commandName := commandLine[0]
 

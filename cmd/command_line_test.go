@@ -7,14 +7,14 @@ import (
 	"github.com/jamesnetherton/homehub-cli/service"
 )
 
-type FakeCommand struct {
+type fakeCommand struct {
 }
 
-func (c *FakeCommand) Execute(context *CommandContext) {
+func (c *fakeCommand) Execute(context *CommandContext) {
 	context.SetResult("Test result", nil)
 }
 
-func (c *FakeCommand) ExecuteLifecylce(args []string) {
+func (c *fakeCommand) ExecuteLifecylce(args []string) {
 	context := &CommandContext{
 		args: args,
 	}
@@ -22,20 +22,20 @@ func (c *FakeCommand) ExecuteLifecylce(args []string) {
 	c.Execute(context)
 }
 
-func (c *FakeCommand) GetName() string {
+func (c *fakeCommand) GetName() string {
 	return "TestCommand"
 }
 
-func (c *FakeCommand) Validate(context *CommandContext) bool {
+func (c *fakeCommand) Validate(context *CommandContext) bool {
 	return true
 }
 
-func (c *FakeCommand) Usage() {
+func (c *fakeCommand) Usage() {
 	fmt.Printf("Usage FakeCommand foo<Bar>")
 }
 
 func TestCommandLineParseWithNoArgs(t *testing.T) {
-	command := &FakeCommand{}
+	command := &fakeCommand{}
 	commands := []Command{command}
 
 	args := []string{}
@@ -50,7 +50,7 @@ func TestCommandLineParseWithNoArgs(t *testing.T) {
 }
 
 func TestCommandLineParseWithOneArg(t *testing.T) {
-	command := &FakeCommand{}
+	command := &fakeCommand{}
 	commands := []Command{command}
 
 	args := []string{"TestCommand"}
@@ -67,7 +67,6 @@ func TestCommandLineParseWithOneArg(t *testing.T) {
 func TestAuthenticatingCommandLineParseWithOneArg(t *testing.T) {
 	command := &AuthenticationRequiringCommand{}
 
-	// command := &FakeCommand{}
 	commands := []Command{command}
 
 	args := []string{"TestCommand"}
@@ -142,7 +141,7 @@ func TestAuthenticatingCommandLineParseWithcompleteFlags(t *testing.T) {
 }
 
 func TestCommandLineParseWithDefaultFlags(t *testing.T) {
-	command := &FakeCommand{}
+	command := &fakeCommand{}
 	commands := []Command{command}
 
 	args := []string{"TestCommand", "--password=cheese"}

@@ -1,18 +1,19 @@
 package service
 
 import (
-	"strings"
 	"time"
 
 	homehub "github.com/jamesnetherton/homehub-client"
 )
 
-var hub *homehub.Hub
+var hub homehub.Hub
+var url string
 var isLoggedIn bool
 var ticker *time.Ticker
 
 // NewHub creates a new Hub
-func NewHub(hubURL string, userName string, password string) *homehub.Hub {
+func NewHub(hubURL string, userName string, password string) homehub.Hub {
+	url = hubURL
 	hub = homehub.New(hubURL, userName, password)
 
 	// Poll the hub every minute to see if the user session is still active
@@ -34,8 +35,18 @@ func NewHub(hubURL string, userName string, password string) *homehub.Hub {
 }
 
 // GetHub gets the stored instance of Hub
-func GetHub() *homehub.Hub {
+func GetHub() homehub.Hub {
 	return hub
+}
+
+// SetHub sets the stored instance of Hub
+func SetHub(hubInstance homehub.Hub) {
+	hub = hubInstance
+}
+
+// GetHubURL gets the Hub URL
+func GetHubURL() string {
+	return url
 }
 
 // IsLoggedIn returns whether a user is logged into the Hub
@@ -46,9 +57,4 @@ func IsLoggedIn() bool {
 // AuthenticationComplete flags that the Hub login process is complete
 func AuthenticationComplete() {
 	isLoggedIn = true
-}
-
-// StringIsEmpty checks to see if a string is empty
-func StringIsEmpty(s string) bool {
-	return len(strings.TrimSpace(s)) == 0
 }

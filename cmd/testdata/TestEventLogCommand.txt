@@ -1,0 +1,9 @@
+
+--                            ----------          ----------------         ----   
+Time                          Type                Category                 Message
+--                            ----------          ----------------         ----   
+2018-01-01 00:00:00           Type 1              INFO                     Log entry 1
+2018-01-01 00:00:00           Type 2              INFO                     Log entry 2
+2018-01-01 00:00:00           Type 3              INFO                     Log entry 3
+2018-01-01 00:00:00           Type 4              INFO                     Log entry 4
+2018-01-01 00:00:00           Type 5              INFO                     Log entry 5

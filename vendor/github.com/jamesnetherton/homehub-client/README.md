@@ -1,6 +1,6 @@
 # Home Hub Client
 
-[![CircleCI](https://img.shields.io/circleci/project/jamesnetherton/homehub-client/master.svg)](https://circleci.com/gh/jamesnetherton/homehub-client/tree/master)
+[![CircleCI](https://img.shields.io/circleci/project/github/jamesnetherton/homehub-client/master.svg)](https://circleci.com/gh/jamesnetherton/homehub-client/tree/master)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=600)](https://opensource.org/licenses/MIT)
 
 A golang client that can interact with BT Home Hub routers. Refer to the [compatibility matrix](matrix.md)

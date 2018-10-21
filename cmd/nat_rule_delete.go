@@ -20,6 +20,7 @@ func NewNatRuleDeleteCommand(authenticatingCommand *GenericCommand) *Authenticat
 				if err != nil {
 					parseErr := errors.New("ID must be a numeric value")
 					context.SetResult(nil, parseErr)
+					return
 				}
 				context.SetResult(nil, service.GetHub().NatRuleDelete(id))
 			},

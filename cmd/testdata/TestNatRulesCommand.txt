@@ -1,0 +1,9 @@
+
+--   ---------------------    -------        -------------------      -----------------        -------------------      -----------------        --------  
+ID   Description              Enabled        External Port Start      External Port End        Internal Port Start      Internal Port End        Protocol  
+--   ---------------------    -------        -------------------      -----------------        -------------------      -----------------        --------  
+1    Test NAT rule 1          true           1000                     2000                     3000                     2000                     TCP       
+2    Test NAT rule 2          true           2000                     4000                     6000                     4000                     TCP       
+3    Test NAT rule 3          true           3000                     6000                     9000                     6000                     TCP       
+4    Test NAT rule 4          true           4000                     8000                     12000                    8000                     TCP       
+5    Test NAT rule 5          true           5000                     10000                    15000                    10000                    TCP       

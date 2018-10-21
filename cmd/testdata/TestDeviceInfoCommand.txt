@@ -1,0 +1,5 @@
+
+--   ----------          ----------------         ----                ------
+ID   IP Address          Physical Address         Type                Active
+--   ----------          ----------------         ----                ------
+12345192.168.1.111       AA:BB:CC:DD:EE:FF:01     Ethernet            Yes  

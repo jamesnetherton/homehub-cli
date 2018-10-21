@@ -1,8 +1,16 @@
-hash: b4dd2421f3ad888feb199f159112dc2a811f23c1a72d5beaa87d6340f2e976c3
-updated: 2018-08-13T17:01:32.327665051+01:00
+hash: c5fe196f352762f10d19964c08bb0154ccee45621a88a3d4ea26d8b1befad856
+updated: 2018-10-21T10:18:20.682735549+01:00
 imports:
 - name: github.com/chzyer/readline
   version: 62c6fe6193755f722b8b8788aa7357be55a50ff1
+- name: github.com/golang/mock
+  version: c34cdb4725f4c3844d095133c6e40e448b86589b
+  subpackages:
+  - gomock
 - name: github.com/jamesnetherton/homehub-client
-  version: ab12e1dd2d2e8cc81a77a4ae4223ae1612ec0c56
-testImports: []
+  version: 01f154c05deda7f4f3e4c8724cb6409480f63504
+testImports:
+- name: golang.org/x/net
+  version: 04a2e542c03f1d053ab3e4d6e5abcd4b66e2be8e
+  subpackages:
+  - context

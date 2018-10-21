@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jamesnetherton/homehub-cli/service"
 )
@@ -19,8 +20,19 @@ func NewEnableDhcpAuthoritativeCommand(authenticatingCommand *GenericCommand) *A
 				if err != nil {
 					parseErr := errors.New("Enable flag must be either true or false")
 					context.SetResult(nil, parseErr)
+					return
 				}
 				context.SetResult(nil, service.GetHub().EnableDhcpAuthoritative(enable))
+			},
+			PostExec: func(context *CommandContext) {
+				enabled, _ := context.GetBooleanArg(0)
+				if !context.IsError() {
+					status := "disabled"
+					if enabled {
+						status = "enabled"
+					}
+					fmt.Printf("Hub DHCP authoritative successfully %s\n", status)
+				}
 			},
 		},
 		AuthenticatingCommand: authenticatingCommand,

@@ -7,7 +7,7 @@ import (
 	"github.com/chzyer/readline"
 	"github.com/jamesnetherton/homehub-cli/cli"
 	"github.com/jamesnetherton/homehub-cli/cmd"
-	"github.com/jamesnetherton/homehub-cli/service"
+	"github.com/jamesnetherton/homehub-cli/util"
 )
 
 func main() {
@@ -43,9 +43,9 @@ func main() {
 func initPrompt() string {
 	var user string
 
-	if !service.StringIsEmpty(os.Getenv("USER")) {
+	if !util.StringIsEmpty(os.Getenv("USER")) {
 		user = os.Getenv("USER")
-	} else if !service.StringIsEmpty(os.Getenv("USERNAME")) {
+	} else if !util.StringIsEmpty(os.Getenv("USERNAME")) {
 		user = os.Getenv("USERNAME")
 	} else {
 		user = "unknown"

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jamesnetherton/homehub-cli/service"
 )
@@ -18,8 +19,20 @@ func NewEnableDebugCommand() *GenericCommand {
 			if err != nil {
 				parseErr := errors.New("Enable flag must be either true or false")
 				context.SetResult(nil, parseErr)
+				return
 			}
 			service.GetHub().EnableDebug(enable)
+		},
+		PostExec: func(context *CommandContext) {
+			if !context.IsError() {
+				status := "disabled"
+				enabled, _ := context.GetBooleanArg(0)
+				if enabled {
+					status = "enabled"
+				}
+
+				fmt.Printf("Hub client debugging %s\n", status)
+			}
 		},
 	}
 }

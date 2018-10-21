@@ -14,12 +14,12 @@ func (debug debugging) Printf(format string, args ...interface{}) {
 
 func (debug debugging) Print(args ...interface{}) {
 	if debug {
-		log.Print(args)
+		log.Print(args...)
 	}
 }
 
 func (debug debugging) Println(args ...interface{}) {
 	if debug {
-		log.Println(args)
+		log.Println(args...)
 	}
 }
