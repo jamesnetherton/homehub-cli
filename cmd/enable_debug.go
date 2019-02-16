@@ -21,7 +21,7 @@ func NewEnableDebugCommand() *GenericCommand {
 				context.SetResult(nil, parseErr)
 				return
 			}
-			service.GetHub().EnableDebug(enable)
+			service.EnableDebug(enable)
 		},
 		PostExec: func(context *CommandContext) {
 			if !context.IsError() {

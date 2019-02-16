@@ -10,11 +10,13 @@ var hub homehub.Hub
 var url string
 var isLoggedIn bool
 var ticker *time.Ticker
+var debug bool
 
 // NewHub creates a new Hub
 func NewHub(hubURL string, userName string, password string) homehub.Hub {
 	url = hubURL
 	hub = homehub.New(hubURL, userName, password)
+	hub.EnableDebug(debug)
 
 	// Poll the hub every minute to see if the user session is still active
 	if ticker == nil {
@@ -57,4 +59,12 @@ func IsLoggedIn() bool {
 // AuthenticationComplete flags that the Hub login process is complete
 func AuthenticationComplete() {
 	isLoggedIn = true
+}
+
+// EnableDebug enables or disabled debugging
+func EnableDebug(enabled bool) {
+	debug = enabled
+	if hub != nil {
+		hub.EnableDebug(debug)
+	}
 }

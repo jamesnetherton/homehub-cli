@@ -1,0 +1,1 @@
+Hub client debugging enabled

@@ -43,3 +43,7 @@ func TestEnableDebugCommandInvalid(t *testing.T) {
 
 	AssertCommandOutput(t, NewEnableDebugCommand(), "abc")
 }
+
+func TestEnableDebugWithoutLogin(t *testing.T) {
+	AssertCommandOutput(t, NewEnableDebugCommand(), "true")
+}
