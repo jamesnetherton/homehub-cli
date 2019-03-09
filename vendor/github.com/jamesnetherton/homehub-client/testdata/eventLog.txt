@@ -1,2 +1,0 @@
-01.03.2017 01:11:11 INF WIFI 1 Test log message 1
-02.03.2017 02:22:22 WRN TR69 0 ppp1:TR69 ConnectionRequest: processing request from ACS
