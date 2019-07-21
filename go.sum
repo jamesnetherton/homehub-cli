@@ -1,0 +1,14 @@
+github.com/chzyer/logex v1.1.10 h1:Swpa1K6QvQznwJRcfTfQJmTE72DqScAa40E+fbHEXEE=
+github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
+github.com/chzyer/readline v0.0.0-20160726135117-62c6fe619375 h1:JVe1zduaiPlSLOuQcU/MqRJkBbWRPsjdW48+20AtJXM=
+github.com/chzyer/readline v0.0.0-20160726135117-62c6fe619375/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
+github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 h1:q763qf9huN11kDQavWsoZXJNW3xEE4JJyHa5Q25/sd8=
+github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
+github.com/golang/mock v1.1.1 h1:G5FRp8JnTd7RQH5kemVNlMeyXQAztQ3mOWV95KxsXH8=
+github.com/golang/mock v1.1.1/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
+github.com/jamesnetherton/homehub-client v0.9.0 h1:2vkN86B7/AXvCjzz94L28mAxWGjhdeWO3egkiGnaWbI=
+github.com/jamesnetherton/homehub-client v0.9.0/go.mod h1:ak9fTMevyMMKNRc84KNLHItEgCUyx29GRy41xvDEnqM=
+github.com/ryanuber/columnize v0.0.0-20170703205827-abc90934186a h1:Q8Nz7rCBS4Xy0bTupcuQNwem0eUp7qmsm+gbLwaPK34=
+github.com/ryanuber/columnize v0.0.0-20170703205827-abc90934186a/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
+golang.org/x/net v0.0.0-20181017193950-04a2e542c03f h1:4pRM7zYwpBjCnfA1jRmhItLxYJkaEnsmuAcRtA347DA=
+golang.org/x/net v0.0.0-20181017193950-04a2e542c03f/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=

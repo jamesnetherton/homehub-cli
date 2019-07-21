@@ -92,7 +92,9 @@ With debugging enabled, you'll see HTTP requests and responses being output when
 
 ## Building
 
-    git clone git@github.com:jamesnetherton/homehub-cli.git $GOPATH/src/github.com/jamesnetherton/homehub-cli
+This project uses [go modules](https://github.com/golang/go/wiki/Modules). Ensure that you're using a compatible go version in order to build the project. 
+
+    git clone git@github.com:jamesnetherton/homehub-cli.git
     make build
 
 Generated binaries are output to the `build` directory.

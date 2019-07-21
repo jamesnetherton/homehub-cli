@@ -2,9 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.11.1
-
-    working_directory: /go/src/github.com/jamesnetherton/homehub-cli
+      - image: circleci/golang:1.11.12
 
     steps:
       - checkout
