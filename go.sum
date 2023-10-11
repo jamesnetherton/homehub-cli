@@ -10,5 +10,5 @@ github.com/jamesnetherton/homehub-client v0.9.0 h1:2vkN86B7/AXvCjzz94L28mAxWGjhd
 github.com/jamesnetherton/homehub-client v0.9.0/go.mod h1:ak9fTMevyMMKNRc84KNLHItEgCUyx29GRy41xvDEnqM=
 github.com/ryanuber/columnize v0.0.0-20170703205827-abc90934186a h1:Q8Nz7rCBS4Xy0bTupcuQNwem0eUp7qmsm+gbLwaPK34=
 github.com/ryanuber/columnize v0.0.0-20170703205827-abc90934186a/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
-golang.org/x/net v0.7.0 h1:rJrUqqhjsgNp7KqAIc25s9pZnjU7TUcSY7HcVZjdn1g=
-golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+golang.org/x/net v0.17.0 h1:pVaXccu2ozPjCXewfr1S7xza/zcXTity9cCdXQYSjIM=
+golang.org/x/net v0.17.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
